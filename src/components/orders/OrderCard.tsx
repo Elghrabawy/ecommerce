@@ -115,7 +115,7 @@ export default function OrderCard({ order }: { order: IOrder }) {
               <div>
                 <div className="text-xs">Items subtotal</div>
                 <div className="font-medium">
-                   <Currency
+                  <Currency
                     value={itemsTotal}
                     currency="L.E"
                     direction="ltr"

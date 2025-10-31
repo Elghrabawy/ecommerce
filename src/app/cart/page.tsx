@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useRef, useLayoutEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -27,13 +27,13 @@ import NProgress from "nprogress";
 import Currency from "@/components/currency";
 import { useAuth } from "@/context/AuthContext";
 
-const listVariants = {
+const listVariants: Variants = {
   hidden: { opacity: 0, y: 8, scale: 0.995 },
   enter: {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { type: "spring", stiffness: 260, damping: 22 },
+    transition: { type: "spring" as const, stiffness: 260, damping: 22 },
   },
   exit: {
     opacity: 0,
