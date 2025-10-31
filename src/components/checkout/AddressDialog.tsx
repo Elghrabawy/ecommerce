@@ -18,20 +18,17 @@ import { IShippingAddress } from "@/interfaces/order";
 import { apiService } from "@/service/apiService";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addressSchema } from "@/schemas/AddressSchema";
-import LoginForm from "@/app/(auth)/login/LoginForm";
+import { addressSchema } from "@/schemas/AddressSchema"
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  editingIndex: number | null;
   setAddresses: React.Dispatch<React.SetStateAction<IShippingAddress[]>>;
 }
 
 export default function AddressDialog({
   open,
   onOpenChange,
-  editingIndex,
   setAddresses,
 }: Props) {
   const [submitting, setSubmitting] = React.useState(false);
@@ -84,7 +81,7 @@ export default function AddressDialog({
           <DialogHeader>
             <div className="flex items-center justify-between">
               <DialogTitle className="text-lg font-semibold">
-                {editingIndex === null ? "Add address" : "Edit address"}
+                { "Add address"}
               </DialogTitle>
             </div>
 

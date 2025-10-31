@@ -19,11 +19,17 @@ export default function AllOrderesPage() {
     setLoading(true);
     setError(null);
     try {
-      const res: IOrder[] = await apiService.getUserOrderes("68f95707a20df420ac88385a");
+      const res = await apiService.getUserOrderes("68f95707a20df420ac88385a");
       setOrders(res || []);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
-      setError(err?.message || "Failed to load orders");
+      if (err instanceof Error) {
+        setError(err.message);
+      } else if (typeof err === "string") {
+        setError(err);
+      } else {
+        setError("Failed to load orders");
+      }
       setOrders([]);
     } finally {
       setLoading(false);
