@@ -62,14 +62,19 @@ class ApiService {
     return localStorage.getItem(TOKEN_KEY);
   }
 
-  getHeader() {
+  // Replace getHeader implementation to always return a HeadersInit-compatible object
+  getHeader(): HeadersInit {
     const token = this.getAuthToken();
-    const auth = token ? {"token" : token} : {};
-
-    return {
+    const headers: Record<string, string> = {
       "Content-Type": "application/json",
-      ...auth,
     };
+
+    // use Authorization header when token exists (and ensure value is a string)
+    if (token) {
+      headers["token"] = `${token}`;
+    }
+
+    return headers;
   }
 
   // AUTH end points
