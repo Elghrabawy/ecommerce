@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [openLoginDialog, setOpenLoginDialog] = useState<boolean>(false);
-  const [onAuthorizedCallback, setOnAuthorizedCallback] = useState<(() => void) | null>(null);
+  const [onAuthorizedCallback, setOnAuthorizedCallback] = useState<(() => void) | null | undefined>(null);
   const isAuthenticated = Boolean(user);
 
   const verify = async () => {
@@ -114,9 +114,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const authProcess = async (onAuthorized?: () => void) => {
-    if(isAuthenticated) {
+    if(isAuthenticated && onAuthorized != undefined) {
       onAuthorized();
-    } else {
+    } else if(!isAuthenticated && onAuthorized != undefined) {
       // console.log("not authenticated");
       setOpenLoginDialog(true);
       setOnAuthorizedCallback(() => {

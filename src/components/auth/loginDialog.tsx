@@ -11,7 +11,7 @@ import LoginForm from "@/app/(auth)/login/LoginForm";
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onLogin?: () => void | null;
+  onLogin?: (() => void) | null | undefined;
 }
 
 export default function LoginDialog({

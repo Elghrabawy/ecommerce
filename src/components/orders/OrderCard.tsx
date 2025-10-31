@@ -143,7 +143,7 @@ export default function OrderCard({ order }: { order: IOrder }) {
 
           <div className="flex items-center gap-3">
             <button
-              className="flex items-center gap-2 px-3 py-2 rounded-md bg-secondary/50 hover:bg-secondary duration-200 transition-all  text-sm"
+              className="flex items-center gap-2 px-3 py-2 rounded-md bg-secondary/50 hover:bg-secondary duration-200 transition-all text-sm"
               onClick={() => setIsOpen((s) => !s)}
               aria-expanded={isOpen}
             >

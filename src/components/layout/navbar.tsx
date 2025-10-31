@@ -331,11 +331,11 @@ export default function Navbar() {
                             <div className="text-sm font-semibold truncate">
                               {user?.name ?? "User"}
                             </div>
-                            {user?.email && (
+                            {/* {user?.email && (
                               <div className="text-xs text-muted-foreground truncate">
                                 {user.email}
                               </div>
-                            )}
+                            )} */}
                           </div>
                         </div>
                       </div>

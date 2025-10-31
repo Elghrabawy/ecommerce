@@ -19,7 +19,7 @@ export default function LoginForm({
   onLogin,
 }: {
   className?: string;
-  onLogin?: () => void;
+  onLogin?: (() => void) | null | undefined;
 }) {
   const router = useRouter();
   const emailRef = useRef<HTMLInputElement | null>(null);
