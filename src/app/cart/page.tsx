@@ -11,10 +11,7 @@ import {
   Trash2,
   ShoppingCart,
   CreditCard,
-  Loader,
-  Tag,
   Loader2,
-  Sparkles,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import {
@@ -25,7 +22,6 @@ import {
 } from "@/redux/slices/cartSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch, StoreType } from "@/redux/store";
-import { apiService } from "@/service/apiService";
 import { useRouter } from "next/navigation";
 import NProgress from "nprogress";
 import Currency from "@/components/currency";
@@ -73,38 +69,7 @@ const SkeletonItem = ({ keyIndex }: { keyIndex: number }) => (
 );
 
 export default function CartPage() {
-  const { isAuthenticated } = useAuth();
-
-  if (!isAuthenticated) {
-    return (
-      <div className="mt-22 min-h-screen py-16 bg-gradient-to-b from-background/60 to-background">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.36 }} className="rounded-2xl border border-border/40 p-8 text-center bg-background shadow-lg">
-            <div className="flex items-center justify-center mb-4">
-              <ShoppingCart className="h-10 w-10 text-primary" />
-            </div>
-            <h1 className="text-2xl font-extrabold mb-2">Sign in to view your cart</h1>
-            <p className="text-sm text-muted-foreground mb-6">You need to be logged in to access your cart. Login or create an account to continue.</p>
-
-            <div className="flex items-center justify-center gap-3">
-              <Link href="/login" onClick={() => NProgress.start()}>
-                <Button className="flex items-center gap-2"> Login</Button>
-              </Link>
-
-              <Link href="/register" onClick={() => NProgress.start()}>
-                <Button variant="outline" className="flex items-center gap-2"> Create account</Button>
-              </Link>
-
-              <Link href="/products" onClick={() => NProgress.start()}>
-                <Button variant="ghost" className="flex items-center gap-2"> Browse</Button>
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    );
-  }
-
+  const dispatch = useDispatch<AppDispatch>();
   const cart = useSelector((state: StoreType) => state.cart.cart.cart);
   const isFetchingCart = useSelector(
     (state: StoreType) => state.cart.cart.isFetching
@@ -113,7 +78,7 @@ export default function CartPage() {
     (state: StoreType) => state.cart.cart.firstFetching
   );
 
-  const dispatch = useDispatch<AppDispatch>();
+  const { isAuthenticated } = useAuth();
 
   const prevFetchingRef = useRef<boolean | null>(null);
   const [skipEnterAnimations, setSkipEnterAnimations] = useState(false);
@@ -154,6 +119,52 @@ export default function CartPage() {
         : 0,
     [cart]
   );
+
+  if (!isAuthenticated) {
+    return (
+      <div className="mt-22 min-h-screen py-16 bg-gradient-to-b from-background/60 to-background">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.36 }}
+            className="rounded-2xl border border-border/40 p-8 text-center bg-background shadow-lg"
+          >
+            <div className="flex items-center justify-center mb-4">
+              <ShoppingCart className="h-10 w-10 text-primary" />
+            </div>
+            <h1 className="text-2xl font-extrabold mb-2">
+              Sign in to view your cart
+            </h1>
+            <p className="text-sm text-muted-foreground mb-6">
+              You need to be logged in to access your cart. Login or create an
+              account to continue.
+            </p>
+
+            <div className="flex items-center justify-center gap-3">
+              <Link href="/login" onClick={() => NProgress.start()}>
+                <Button className="flex items-center gap-2"> Login</Button>
+              </Link>
+
+              <Link href="/register" onClick={() => NProgress.start()}>
+                <Button variant="outline" className="flex items-center gap-2">
+                  {" "}
+                  Create account
+                </Button>
+              </Link>
+
+              <Link href="/products" onClick={() => NProgress.start()}>
+                <Button variant="ghost" className="flex items-center gap-2">
+                  {" "}
+                  Browse
+                </Button>
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-22 min-h-screen py-16 bg-gradient-to-b from-background/60 to-background">
