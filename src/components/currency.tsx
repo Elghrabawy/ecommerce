@@ -59,7 +59,7 @@ export default function Currency({
     maximumFractionDigits,
   });
 
-  if (renderAs === "text") return (formatted as unknown) as JSX.Element;
+  if (renderAs === "text") return <>{formatted}</>;
 
   return (
     <span
