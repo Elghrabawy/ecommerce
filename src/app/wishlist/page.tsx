@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import type { IProduct } from "@/interfaces";
-import type { StoreType } from "@/redux/store";
+import type { AppDispatch, StoreType } from "@/redux/store";
 import { fetchWishList, toggleWishList } from "@/redux/slices/wishListSlice";
 import AddToCartButton from "@/components/products/AddToCartButton";
 import { Button } from "@/components/ui/button";
@@ -48,11 +48,11 @@ export default function WishlistPage() {
     );
   }
 
-  const dispatch = useDispatch<any>();
+  const dispatch = useDispatch<AppDispatch>();
 
   const wishState = useSelector(
     (s: StoreType) =>
-      (s?.wishlist as any)?.wishList ?? {
+      (s?.wishlist)?.wishList ?? {
         isFetching: false,
         firstFetching: false,
         products: [] as IProduct[],

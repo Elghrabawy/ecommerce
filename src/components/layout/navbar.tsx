@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/sheet";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
-import { StoreType } from "@/redux/store";
+import { AppDispatch, StoreType } from "@/redux/store";
 import { fetchCart } from "@/redux/slices/cartSlice";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter, usePathname } from "next/navigation";
@@ -63,7 +63,7 @@ export default function Navbar() {
     (state: StoreType) => state.wishlist.wishList.firstFetching
   );
 
-  const dispatch = useDispatch<any>();
+  const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const { user, logout, isAuthenticated } = useAuth();
 

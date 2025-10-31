@@ -31,8 +31,13 @@ import {
   toggleWishList,
 } from "@/redux/slices/wishListSlice";
 import LoginDialog from "@/components/auth/loginDialog";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ProductsPage() {
+  const { isAuthenticated } = useAuth();
+
+
+
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [searchInput, setSearchInput] = useState("");
   const [sort, setSort] = useState<string>("-sold");
@@ -103,9 +108,6 @@ export default function ProductsPage() {
       const response = await apiService.fetchBrands();
       setBrands(response.data);
     };
-
-    dispatch(fetchWishList());
-    dispatch(fetchCart());
 
     fetchBrands();
     fetchCategories();

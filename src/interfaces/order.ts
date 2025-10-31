@@ -13,7 +13,7 @@ export interface IOrderUser {
   name: string;
   email?: string;
   phone?: string;
-  [k: string]: any;
+  // [k: string]: any;
 }
 
 export interface IOrderCartItem {
@@ -38,7 +38,7 @@ export interface IOrder {
   createdAt: string;
   updatedAt: string;
   id?: number | string;
-  [k: string]: any;
+  // [k: string]: any;
 }
 
 export type OrdersResponse = IOrder[];

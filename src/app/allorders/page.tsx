@@ -21,7 +21,7 @@ export default function AllOrderesPage() {
     try {
       const res: IOrder[] = await apiService.getUserOrderes("68f95707a20df420ac88385a");
       setOrders(res || []);
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
       setError(err?.message || "Failed to load orders");
       setOrders([]);

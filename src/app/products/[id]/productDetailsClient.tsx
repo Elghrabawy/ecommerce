@@ -12,7 +12,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { IProduct } from "@/interfaces";
+import type { IProduct, ISubcategory } from "@/interfaces";
 import NProgress from "nprogress";
 import AddToCartButton from "@/components/products/AddToCartButton";
 import { useDispatch, useSelector } from "react-redux";
@@ -39,7 +39,7 @@ export default function ProductDetailsClient({
   const brand = product.brand?.name || "No Brand";
   const subcategories: string[] = (
     product.subcategory 
-  ).map((s: any) => (typeof s === "string" ? s : s?.name ?? String(s)));
+  ).map((s: ISubcategory) => (typeof s === "string" ? s : s?.name ?? String(s)));
 
   const price = product.priceAfterDiscount ?? product.price ?? 0;
   const oldPrice = product.priceAfterDiscount ? product.price : null;

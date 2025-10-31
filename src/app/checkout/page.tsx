@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
-import type { StoreType } from "@/redux/store";
+import type { AppDispatch, StoreType } from "@/redux/store";
 import { fetchCart as fetchCartThunk } from "@/redux/slices/cartSlice";
 import { Button } from "@/components/ui/button";
 import { apiService } from "@/service/apiService";
@@ -37,7 +37,7 @@ const addressesContainer = {
 export default function CheckoutPage() {
   const router = useRouter();
 
-  const dispatch = useDispatch<any>();
+  const dispatch = useDispatch<AppDispatch>();
   const cart: ICartData | null =
     useSelector((s: StoreType) => s.cart?.cart ?? null).cart ?? null;
   const items = cart?.products ?? [];
