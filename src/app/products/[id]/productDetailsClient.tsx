@@ -4,14 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import {
-  Heart,
   Tag,
   Layers,
   TrendingUp,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import type { IProduct, ISubcategory } from "@/interfaces";
 import NProgress from "nprogress";
 import AddToCartButton from "@/components/products/AddToCartButton";
@@ -35,7 +33,6 @@ export default function ProductDetailsClient({
     Boolean
   );
   const displayedImages = images.length ? images : ["/placeholder-product.png"];
-  const category = product.category?.name || "Uncategorized";
   const brand = product.brand?.name || "No Brand";
   const subcategories: string[] = (
     product.subcategory 
@@ -278,7 +275,7 @@ export default function ProductDetailsClient({
                     Condition
                   </div>
                   <div className="font-semibold mt-1">
-                    {product.condition ?? "New"}
+                    {"New"}
                   </div>
                 </div>
               </div>
@@ -304,7 +301,7 @@ export default function ProductDetailsClient({
                       ${oldPrice}
                     </div>
                   )}
-                  {product.priceAfterDiscount && (
+                  {product.priceAfterDiscount && oldPrice && (
                     <div className="ml-auto text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">
                       -
                       {Math.round(((oldPrice - price) / (oldPrice || 1)) * 100)}
