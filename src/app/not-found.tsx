@@ -5,7 +5,7 @@ import NProgress from "nprogress";
 
 export default function NotFound() {
   NProgress.done();
-  
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 pt-16">
       <div className="max-w-2xl w-full text-center">
@@ -19,8 +19,8 @@ export default function NotFound() {
         {/* Title & Description */}
         <h2 className="text-3xl md:text-4xl font-bold mb-4">Page Not Found</h2>
         <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">
-          Oops! The page you're looking for doesn't exist. It might have been
-          moved or deleted.
+          {`Oops! The page you're looking for doesn't exist. It might have been
+          moved or deleted.`}
         </p>
 
         {/* Action Buttons */}
