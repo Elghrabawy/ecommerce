@@ -276,7 +276,7 @@ export default function CartPage() {
                             <Link
                               href={`/products/${p?._id}`}
                               onClick={() => NProgress.start()}
-                              className="font-semibold truncate"
+                              className="font-semibold truncate line-clamp-2"
                               
                             >
                               {p?.title ?? `Product ${p?._id ?? it._id}`}
