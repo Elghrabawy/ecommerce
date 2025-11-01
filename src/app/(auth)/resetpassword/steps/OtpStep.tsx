@@ -11,7 +11,6 @@ import {
 import { AlertCircle, Loader2 } from "lucide-react";
 import type { IProcessResponse } from "@/interfaces";
 import { OtpForm } from "@/schemas/resetPassword/otpSchema";
-import { type } from "./../../../../types/viewMode";
 
 type Props = {
   email: string;
