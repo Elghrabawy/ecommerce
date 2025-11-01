@@ -23,7 +23,7 @@ export default function LoginDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogPortal>
-        <DialogContent className="bg-accent/80 backdrop-blur-xl ">
+        <DialogContent className="bg-accent/20 backdrop-blur-xl ">
           <LoginForm onLogin={onLogin}  className="bg-transparent shadow-transparent ring-0 ring-transparent border-transparent" />
         </DialogContent>
       </DialogPortal>

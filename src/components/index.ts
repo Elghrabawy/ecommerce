@@ -10,7 +10,7 @@ export * from './providersContainer/providersContainer'
 
 
 
-export * from './stars'
+export * from './utils/stars'
 
 
 

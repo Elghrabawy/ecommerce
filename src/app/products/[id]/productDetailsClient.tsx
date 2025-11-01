@@ -15,7 +15,7 @@ import NProgress from "nprogress";
 import AddToCartButton from "@/components/products/AddToCartButton";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, StoreType } from "@/redux/store";
-import { Stars } from "@/components/stars";
+import { Stars } from "@/components/utils/stars";
 import WishlistButton from "@/components/products/WishlistButton";
 import { findInWishList, toggleWishList } from "@/redux/slices/wishListSlice";
 

@@ -43,7 +43,6 @@ class ApiService {
   private baseUrl: string;
   private token: string | null = null;
 
-
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
   }
@@ -100,12 +99,40 @@ class ApiService {
   async verify() {
     const response = await fetch(this.baseUrl + `/auth/verifyToken`, {
       method: "GET",
-      headers: this.getHeader()
+      headers: this.getHeader(),
     }).then((res) => res.json());
 
-    
     return response;
-    
+  }
+
+  async sendOtp(email: string) {
+    const response = await fetch(this.baseUrl + `/auth/forgotPasswords`, {
+      method: "POST",
+      headers: this.getHeader(),
+      body: JSON.stringify({ email }),
+    }).then((res) => res.json());
+
+    return response;
+  }
+
+  async verifyOtp(opt: string) {
+    const response = await fetch(this.baseUrl + `/auth/verifyResetCode`, {
+      method: "POST",
+      headers: this.getHeader(),
+      body: JSON.stringify({ resetCode: opt }),
+    }).then((res) => res.json());
+
+    return response;
+  }
+
+  async resetPassword(email: string, newPassword: string) {
+    const response = await fetch(this.baseUrl + `/auth/resetPassword`, {
+      method: "PUT",
+      headers: this.getHeader(),
+      body: JSON.stringify({ email, newPassword }),
+    }).then((res) => res.json());
+
+    return response;
   }
 
   // PRODUCT end points
@@ -184,16 +211,20 @@ class ApiService {
   }
 
   // ORDER end points
-  async checkoutSession(cartId : string, shippingAddress : IShippingAddress) {
-    const response = await fetch(this.baseUrl + `/orders/checkout-session/${cartId}?url=${process.env.NEXT_PUBLIC_BASE_URL}`, {
-      method: "POST",
-      headers: this.getHeader(),
-      body: JSON.stringify({ shippingAddress }),
-    }).then((res) => res.json());
+  async checkoutSession(cartId: string, shippingAddress: IShippingAddress) {
+    const response = await fetch(
+      this.baseUrl +
+        `/orders/checkout-session/${cartId}?url=${process.env.NEXT_PUBLIC_BASE_URL}`,
+      {
+        method: "POST",
+        headers: this.getHeader(),
+        body: JSON.stringify({ shippingAddress }),
+      }
+    ).then((res) => res.json());
     return response;
   }
 
-  async checkoutOnDelivery(cartId : string, shippingAddress : IShippingAddress) {
+  async checkoutOnDelivery(cartId: string, shippingAddress: IShippingAddress) {
     const response = await fetch(this.baseUrl + `/orders/${cartId}`, {
       method: "POST",
       headers: this.getHeader(),
@@ -202,16 +233,16 @@ class ApiService {
     return response;
   }
 
-  async getUserOrderes(userId : string) {
+  async getUserOrderes(userId: string) {
     const response = await fetch(this.baseUrl + `/orders/user/` + userId, {
       headers: this.getHeader(),
     }).then((res) => res.json());
-    
+
     return response;
   }
 
   // ADDRESS end points
-  async addAddress(data : IShippingAddress) {
+  async addAddress(data: IShippingAddress) {
     const response = await fetch(this.baseUrl + `/addresses`, {
       method: "POST",
       headers: this.getHeader(),
@@ -236,7 +267,7 @@ class ApiService {
     return response;
   }
 
-  async addToWishList(productId : string) {
+  async addToWishList(productId: string) {
     const response = await fetch(this.baseUrl + `/wishlist`, {
       method: "POST",
       headers: this.getHeader(),
@@ -245,7 +276,7 @@ class ApiService {
     return response;
   }
 
-  async deleteFromWishList(productId : string) {
+  async deleteFromWishList(productId: string) {
     const response = await fetch(this.baseUrl + `/wishlist/${productId}`, {
       method: "DELETE",
       headers: this.getHeader(),

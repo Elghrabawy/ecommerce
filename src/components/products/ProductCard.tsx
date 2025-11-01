@@ -2,39 +2,35 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
-
-import type { IProduct } from "@/interfaces";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import AddToCartButton from "@/components/products/AddToCartButton";
 import WishlistButton from "@/components/products/WishlistButton";
-import { ViewMode } from "@/types";
-import { motion } from "framer-motion";
-import Currency, { formatCurrency } from './../currency';
+import Currency from "../utils/currency";
+import { IProduct } from "@/interfaces";
 
-
+type ProductCardProps = {
+  product: IProduct;
+  viewMode: "grid" | "list";
+  isWished: (productId: string) => boolean;
+  toggleWish: (product: IProduct) => void;
+};
 
 export function ProductCard({
   product,
   viewMode,
   isWished,
   toggleWish,
-}: {
-  product: IProduct;
-  viewMode: ViewMode;
-  isWished: (productId: string) => boolean;
-  toggleWish: (product: IProduct) => void;
-}) {
+}: ProductCardProps) {
   const [currentImage, setCurrentImage] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
   const images = [product.imageCover, ...(product.images || [])].filter(
     Boolean
   );
-  
 
   useEffect(() => {
     if (viewMode !== "grid") return;
@@ -45,34 +41,33 @@ export function ProductCard({
       return () => clearInterval(interval);
     }
     setCurrentImage(0);
-    
   }, [isHovered, images.length, viewMode]);
 
   const startLoader = () => NProgress.start();
 
-  // LIST MODE — keep mostly same but refreshed styling
+  // LIST MODE
   if (viewMode === "list") {
     return (
-      <article className="flex flex-row items-stretch gap-4 group bg-white dark:bg-slate-800 border border-border/40 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow">
+      <article className="flex flex-col sm:flex-row gap-3 bg-secondary/10 border border-border/40 rounded-xl p-3 hover:shadow-md transition shadow-sm">
         <Link
           href={`/products/${product.id}`}
-          className="block flex-shrink-0"
           onClick={startLoader}
+          className="flex-shrink-0 w-full sm:w-36"
         >
-          <div className="w-36 sm:w-44 lg:w-48 aspect-square bg-accent/30 relative overflow-hidden">
+          <div className="w-full aspect-square rounded-lg overflow-hidden bg-accent/20">
             <Image
               height={400}
               width={400}
               src={product.imageCover}
               alt={product.title}
-              className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
           </div>
         </Link>
 
-        <div className="flex-1 flex flex-col justify-between p-4">
+        <div className="flex flex-col justify-between flex-1 gap-2">
           <div>
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
               {product.category?.name && (
                 <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
                   {product.category.name}
@@ -88,41 +83,44 @@ export function ProductCard({
             <Link
               href={`/products/${product.id}`}
               onClick={startLoader}
-              className="font-semibold text-lg line-clamp-2 hover:text-primary block mb-2"
+              className="font-semibold text-base sm:text-lg line-clamp-2 hover:text-primary"
             >
               {product.title}
             </Link>
 
-            <p className="text-sm text-muted-foreground mb-3 line-clamp-3">
+            <p className="hidden sm:block text-sm text-muted-foreground line-clamp-2">
               {product.description}
             </p>
 
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1">
-                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                <span className="text-sm font-semibold">
-                  {product.ratingsAverage?.toFixed(1) ?? "0.0"}
-                </span>
-              </div>
-              <span className="text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 mt-1 text-xs sm:text-sm">
+              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+              <span className="font-semibold">
+                {product.ratingsAverage?.toFixed(1) ?? "0.0"}
+              </span>
+              <span className="text-muted-foreground">
                 ({product.ratingsQuantity ?? 0})
               </span>
             </div>
           </div>
 
-          <div className="flex items-center justify-between gap-3 pt-3">
-
-            <div className="text-2xl font-extrabold">${
-              product.priceAfterDiscount ? product.priceAfterDiscount : (product.price ?? 0)
-              }</div>
-            <div className="flex items-center gap-2">
-              <div className="w-[150px]">
-                <AddToCartButton
-                  id={product._id}
-                  productsCount={product.quantity}
-                />
-              </div>
-              <WishlistButton product={product} isWished={isWished} toggle={toggleWish} />
+          <div className="flex items-center justify-between mt-2 flex-wrap gap-2">
+            <span className="font-extrabold text-lg sm:text-2xl">
+              <Currency
+                value={product.price}
+                currency="EGP"
+                maximumFractionDigits={0}
+              />
+            </span>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <AddToCartButton
+                id={product._id}
+                productsCount={product.quantity}
+              />
+              <WishlistButton
+                product={product}
+                isWished={isWished}
+                toggle={toggleWish}
+              />
             </div>
           </div>
         </div>
@@ -130,129 +128,76 @@ export function ProductCard({
     );
   }
 
-  // GRID MODE — redesigned card
+  // GRID MODE
   return (
     <motion.article
       layout
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="relative h-full flex flex-col rounded-2xl group overflow-hidden bg-white dark:bg-slate-800 border border-border/40 hover:shadow-lg transition-shadow"
+      className="rounded-xl overflow-hidden bg-secondary/10 h-full border border-border/40 hover:shadow-md transition shadow-sm flex flex-col"
     >
-      <div className="relative aspect-square bg-accent/10 overflow-hidden ">
-        <Link
-          href={`/products/${product.id}`}
-          onClick={startLoader}
-          className="block "
-        >
+      <div className="relative aspect-square bg-accent/10">
+        <Link href={`/products/${product.id}`} onClick={startLoader}>
           <motion.div
             className="absolute inset-0 h-full flex transition-transform duration-500"
-            style={{
-              width: `100%`,
-              transform: `translateX(-${currentImage * 100}%)`,
-            }}
+            style={{ transform: `translateX(-${currentImage * 100}%)` }}
           >
-            {images.map((img, idx) => (
+            {images.map((img, i) => (
               <div
-                key={idx}
-                className="relative w-full h-full flex-shrink-0 overflow-hidden animation-all duration-400 group-hover:scale-105 "
+                key={i}
+                className="w-full h-full flex-shrink-0 relative overflow-hidden"
               >
                 <Image
                   height={400}
                   width={400}
                   src={img}
-                  alt={product.title + "-" + idx}
-                  className="object-cover w-full h-full transition-transform duration-700 ease-out"
-                  draggable={false}
+                  alt={product.title + i}
+                  className="object-cover w-full h-full"
                 />
               </div>
             ))}
           </motion.div>
         </Link>
 
-        {/* top-right actions */}
-        <div className="absolute top-3 right-3 z-20 flex items-center gap-2">
-          <div className="backdrop-blur-smt bg-white/60 dark:bg-black/40 rounded-full flex justify-center p-1.5 shadow-sm">
-            <WishlistButton product={product} isWished={isWished} toggle={toggleWish} />
-          </div>
+        <div className="absolute top-2 right-2 bg-white/70 dark:bg-black/40 backdrop-blur-sm p-1.5 rounded-full shadow">
+          <WishlistButton
+            product={product}
+            isWished={isWished}
+            toggle={toggleWish}
+          />
         </div>
 
-        {/* price badge bottom-left */}
-        <div className="absolute left-3 bottom-3 z-20">
-          <div className="px-3 py-1 rounded-full bg-primary text-white font-bold shadow-lg">
-            {/* {product.price} L.E */}
-            <Currency value={product.price} currency="EGP" maximumFractionDigits={0}/>
-          </div>
+        <div className="absolute left-2 bottom-2 px-2 py-1 rounded-full bg-primary text-white text-xs font-semibold shadow">
+          <Currency
+            value={product.price}
+            currency="EGP"
+            maximumFractionDigits={0}
+            className="text-secondary"
+          />
         </div>
-
-        {/* dots */}
-        {images.length > 1 && (
-          <div
-            className={`${
-              isHovered ? "opacity-100" : "opacity-0"
-            } absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10 transition-opacity duration-300`}
-          >
-            {images.map((_, idx) => (
-              <span
-                key={idx}
-                className={`h-1.5 rounded-full transition-all ${
-                  idx === currentImage
-                    ? "w-6 bg-primary"
-                    : "w-1.5 bg-secondary/50"
-                }`}
-              />
-            ))}
-          </div>
-        )}
       </div>
 
-      <div className="flex-1 p-4 flex flex-col justify-between">
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              {product.category?.name && (
-                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-                  {product.category.name}
-                </span>
-              )}
-              {product.brand?.name && (
-                <span className="text-xs text-muted-foreground">
-                  {product.brand.name}
-                </span>
-              )}
-            </div>
-
-            <div className="text-sm text-muted-foreground flex items-center gap-2">
-              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-              <span className="font-semibold">
-                {product.ratingsAverage?.toFixed(1) ?? "0.0"}
-              </span>
-              <span className="text-xs text-muted-foreground">
-                ({product.ratingsQuantity ?? 0})
-              </span>
-            </div>
-          </div>
-
+      <div className="p-3 flex flex-col gap-2 flex-1">
+        <div className="flex justify-between items-center">
+          <span className="text-[11px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium line-clamp-1">
+            {product.category?.name}
+          </span>
+          <span className="text-xs flex items-center gap-1 text-muted-foreground">
+            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+            {product.ratingsAverage?.toFixed(1) ?? "0.0"}
+          </span>
+        </div>
+        <span className="h-full flex flex-col justify-between gap-2">
           <Link
             href={`/products/${product.id}`}
             onClick={startLoader}
-            className="font-semibold line-clamp-2 hover:text-primary"
+            className="text-sm font-semibold line-clamp-2 hover:text-primary"
           >
             {product.title}
           </Link>
 
-          <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
-            {product.description}
-          </p>
-        </div>
-
-        <div className="mt-4 flex items-center justify-between gap-3">
-          <div className="items-center gap-3 w-full">
-            <AddToCartButton
-              id={product._id}
-              productsCount={product.quantity}
-            />
-          </div>
-        </div>
+          <AddToCartButton id={product._id} productsCount={product.quantity} />
+        </span>
       </div>
     </motion.article>
   );

@@ -12,10 +12,11 @@ import { registerSchema } from "@/schemas/RegisterSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IProcessResponse, IRegister } from "@/interfaces";
 import { useForm } from "react-hook-form";
+import PasswordStrength from "@/components/utils/passwordStrength";
 
 export default function Register() {
   const router = useRouter();
-  const { register: authRegister } = useAuth(); // avoid name clash with RHF register
+  const { register: authRegister } = useAuth();
   const {
     register: rhfRegister,
     handleSubmit,
@@ -58,30 +59,9 @@ export default function Register() {
   };
 
   useEffect(() => {
-    // focus the name input by id
     const el = document.getElementById("name") as HTMLInputElement | null;
     el?.focus();
   }, []);
-
-  const passwordStrength = useMemo(() => {
-    const pw = password || "";
-    let score = 0;
-    if (pw.length >= 8) score++;
-    if (/[A-Z]/.test(pw)) score++;
-    if (/[0-9]/.test(pw)) score++;
-    if (/[^A-Za-z0-9]/.test(pw)) score++;
-    const pct = (score / 4) * 100;
-    const color =
-      score <= 1
-        ? "bg-red-400"
-        : score === 2
-        ? "bg-yellow-400"
-        : score === 3
-        ? "bg-emerald-400"
-        : "bg-green-500";
-    const label = ["Very weak", "Weak", "Okay", "Strong", "Very strong"][score];
-    return { score, pct, color, label };
-  }, [password]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 ">
@@ -90,14 +70,11 @@ export default function Register() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.36 }}
-        className="w-full max-w-lg space-y-6 p-6 rounded-2xl shadow-lg ring-1 bg-primary/5  ring-secondary"
+        className="w-full max-w-lg space-y-6 p-6 rounded-2xl shadow-lg ring-1 bg-primary/1  ring-secondary"
       >
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-extrabold">Create your account</h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Quick — just a few details to get started.
-            </p>
           </div>
 
           <motion.div
@@ -114,7 +91,7 @@ export default function Register() {
         {/* Name */}
         <div>
           <Label htmlFor="name">Full name</Label>
-          <Input id="name" placeholder="Jane Doe" className="mt-1" {...rhfRegister("name")} />
+          <Input id="name" placeholder="Borhom" className="mt-1" {...rhfRegister("name")} />
           {errors.name?.message && (
             <div className="mt-1 flex items-center gap-2 text-xs text-red-600">
               <AlertCircle className="h-4 w-4" /> <span>{String(errors.name.message)}</span>
@@ -145,12 +122,7 @@ export default function Register() {
             </button>
           </div>
 
-          <div id="pw-help" className="mt-2 flex items-center gap-3">
-            <div className="flex-1 h-2 bg-primary/10 rounded overflow-hidden">
-              <div className={`h-full ${passwordStrength.color} transition-all`} style={{ width: `${passwordStrength.pct}%` }} />
-            </div>
-            <div className="text-xs text-muted-foreground w-24 text-right">{passwordStrength.label}</div>
-          </div>
+          <PasswordStrength password={password} />
 
           {errors.password?.message && (
             <div className="mt-1 flex items-center gap-2 text-xs text-red-600">
@@ -183,7 +155,7 @@ export default function Register() {
         {/* Phone */}
         <div>
           <Label htmlFor="phone">Phone</Label>
-          <Input id="phone" placeholder="01010700701" className="mt-1" {...rhfRegister("phone")} />
+          <Input id="phone" placeholder="01010101010" className="mt-1" {...rhfRegister("phone")} />
           {errors.phone?.message && (
             <div className="mt-1 flex items-center gap-2 text-xs text-red-600">
               <AlertCircle className="h-4 w-4" /> <span>{String(errors.phone.message)}</span>

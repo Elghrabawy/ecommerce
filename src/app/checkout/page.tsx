@@ -21,7 +21,7 @@ import AddressDialog from "@/components/checkout/AddressDialog";
 import type { IShippingAddress } from "@/interfaces/order";
 import NProgress from "nprogress";
 import { Badge } from "@/components/ui/badge";
-import Currency from "@/components/currency";
+import Currency from "@/components/utils/currency";
 
 const listItemVariants = {
   hidden: { opacity: 0, y: 8 },

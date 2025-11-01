@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ILogin, IProcessResponse } from "@/interfaces";
 import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 
 export default function LoginForm({
   className,
@@ -57,6 +58,8 @@ export default function LoginForm({
             router.push("/");
           }
         }, 300);
+      } else {
+        setServerError(response.message);
       }
     } catch (error) {
       setServerError("An unexpected error occurred.");
@@ -75,7 +78,7 @@ export default function LoginForm({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.32 }}
-      className={`w-full max-w-md space-y-6 p-6 rounded-2xl shadow-lg ring-1 bg-primary/5  ring-secondary ${
+      className={`w-full max-w-md space-y-6 p-6 rounded-2xl shadow-lg ring-1 bg-primary/1  ring-secondary ${
         className || ""
       }`}
     >
@@ -138,16 +141,15 @@ export default function LoginForm({
           <span className="text-sm">Remember me</span>
         </label>
 
-        <button
-          type="button"
+        <Link
           className="text-sm text-muted-foreground hover:underline"
           onClick={() => {
             setOpenLoginDialog(false);
-            router.push("/auth/forgot");
           }}
+          href="/resetpassword"
         >
-          Forgot password?
-        </button>
+          {"Forgot password?"}
+        </Link>
       </div>
 
       {serverError && (

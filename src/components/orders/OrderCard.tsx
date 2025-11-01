@@ -3,7 +3,7 @@ import type { IOrder } from "@/interfaces/order";
 import { format } from "date-fns";
 import { ChevronDown, ChevronUp, Copy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import Currency from "../currency";
+import Currency from "../utils/currency";
 
 export default function OrderCard({ order }: { order: IOrder }) {
   const [isOpen, setIsOpen] = useState(false);

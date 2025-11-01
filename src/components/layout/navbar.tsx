@@ -7,7 +7,6 @@ import {
   Sun,
   ShoppingCart,
   User,
-  Search,
   Heart,
   Loader2,
 } from "lucide-react";
@@ -45,10 +44,9 @@ import NProgress from "nprogress";
 
 export default function Navbar() {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // safe cart count
+  // Cart Slice
   const cartCount = useSelector(
     (state: StoreType) => state.cart.cart.cart?.products?.length ?? 0
   );
@@ -56,6 +54,7 @@ export default function Navbar() {
     (state: StoreType) => state.cart.cart.firstFetching
   );
 
+  // Wishlist Slice
   const wishlistCount = useSelector(
     (state: StoreType) => state.wishlist.wishList.products?.length ?? 0
   );
@@ -64,12 +63,13 @@ export default function Navbar() {
   );
 
   const dispatch = useDispatch<AppDispatch>();
+
   const router = useRouter();
+  const pathname = usePathname();
+
   const { user, logout, isAuthenticated } = useAuth();
 
   useEffect(() => {
-    setMounted(true);
-
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
@@ -88,8 +88,6 @@ export default function Navbar() {
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
-
-  const pathname = usePathname();
 
   const startLoader = (href: string) => {
     if (pathname !== href) {
@@ -145,16 +143,100 @@ export default function Navbar() {
                     </SheetTitle>
                   </SheetHeader>
 
-                  <div className="mt-8 flex flex-col space-y-1">
-                    {navLinks.map((link, i) => (
-                      <Link
-                        key={i}
-                        className={`${"text-sm"} font-medium text-foreground/70 hover:text-foreground transition-colors`}
-                        href={link.href}
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
+                  <div className="mt-6 px-4">
+                    {/* Nav links */}
+                    <div className="flex flex-col space-y-1">
+                      {navLinks.map((link, i) => {
+                        const active = pathname?.startsWith(link.href);
+                        return (
+                          <Link
+                            key={i}
+                            href={link.href}
+                            onClick={() => startLoader(link.href)}
+                            className={`flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors ${
+                              active
+                                ? "bg-accent/80 text-foreground shadow-sm"
+                                : "text-foreground/80 hover:bg-accent hover:text-foreground"
+                            }`}
+                            aria-current={active ? "page" : undefined}
+                          >
+                            <span
+                              className={`inline-block h-2 w-2 rounded-full ${
+                                active ? "bg-primary" : "bg-muted-foreground/60"
+                              }`}
+                            />
+                            <span className="truncate">{link.label}</span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+
+                    <div className="my-4">
+                      <Separator />
+                    </div>
+
+                    {/* Quick actions (wishlist / cart) */}
+                    <div className="flex flex-col gap-2">
+                      {isAuthenticated && (
+                        <>
+                          <Link
+                            href="/wishlist"
+                            onClick={() => startLoader("/wishlist")}
+                            className="flex items-center justify-between gap-3 rounded-lg px-3 py-3 text-sm font-medium text-foreground/80 hover:bg-accent hover:text-foreground transition-colors"
+                          >
+                            <div className="flex items-center gap-3">
+                              <Heart className="h-4 w-4" />
+                              <span>Wishlist</span>
+                            </div>
+                            <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                              {wishistLoading ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                wishlistCount
+                              )}
+                            </span>
+                          </Link>
+
+                          <Link
+                            href="/cart"
+                            onClick={() => startLoader("/cart")}
+                            className="flex items-center justify-between gap-3 rounded-lg px-3 py-3 text-sm font-medium text-foreground/80 hover:bg-accent hover:text-foreground transition-colors"
+                          >
+                            <div className="flex items-center gap-3">
+                              <ShoppingCart className="h-4 w-4" />
+                              <span>Cart</span>
+                            </div>
+                            <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                              {cartLoading ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                cartCount
+                              )}
+                            </span>
+                          </Link>
+                        </>
+                      )}
+
+                      {/* Auth CTA for unauthenticated users */}
+                      {!isAuthenticated && (
+                        <div className="flex gap-2">
+                          <Link
+                            href="/login"
+                            onClick={() => startLoader("/login")}
+                            className="flex-1 rounded-lg bg-primary px-3 py-2 text-center text-sm font-semibold text-primary-foreground"
+                          >
+                            Login
+                          </Link>
+                          <Link
+                            href="/register"
+                            onClick={() => startLoader("/register")}
+                            className="flex-1 rounded-lg border border-border/40 px-3 py-2 text-center text-sm font-medium text-foreground/90 hover:bg-accent"
+                          >
+                            Register
+                          </Link>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="absolute bottom-6 left-6 right-6 flex items-center gap-2">

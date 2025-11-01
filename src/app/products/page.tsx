@@ -121,6 +121,8 @@ export default function ProductsPage() {
     [viewMode]
   );
 
+  
+
   return (
     <div className="min-h-screen pt-24 pb-16 ">
       <div className="container mx-auto px-4 relative">
@@ -136,7 +138,7 @@ export default function ProductsPage() {
 
         />
 
-        <div className="mt-8 flex gap-8 ">
+        <div className="mt-8 flex lg:gap-8">
           <div className="">
             <FiltersSidebar
               openMobile={openMobileFilters}
@@ -148,6 +150,7 @@ export default function ProductsPage() {
               updateProductsParams={updateProductsParams}
             />
           </div>
+
           <div className="flex-1">
             <motion.div className={containerClass}>
               {isFirstLoad

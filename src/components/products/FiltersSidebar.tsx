@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import {
   ChevronDown,
   ChevronUp,
+  X,
 } from "lucide-react";
 import "nprogress/nprogress.css";
 import { motion, AnimatePresence } from "framer-motion";
@@ -272,21 +273,44 @@ export function FiltersSidebar({
     <>
       <div className="hidden lg:block">{Sidebar}</div>
       {openMobile && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div
-            className="absolute inset-0 bg-black/40"
-            onClick={() => setOpenMobile(false)}
-          />
-          <div className="absolute bottom-0 left-0 right-0 bg-background rounded-t-2xl p-6 border border-border/40 max-h-[80vh] overflow-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold">Filters</h3>
-              <Button variant="ghost" onClick={() => setOpenMobile(false)}>
-                Close
-              </Button>
-            </div>
-            {Sidebar}
-          </div>
-        </div>
+        <AnimatePresence>
+          {openMobile && (
+            <motion.div
+              key="filters-mobile"
+              className="fixed inset-0 z-50 lg:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+            >
+              {/* backdrop */}
+              <motion.div
+                className="absolute inset-0 bg-black/40"
+                onClick={() => setOpenMobile(false)}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18 }}
+              />
+
+              {/* sheet: slide from bottom on open, slide down on close */}
+              <motion.div
+                className="absolute bottom-0 left-0 right-0 bg-background rounded-t-2xl p-6 border border-border/40 max-h-[80vh] overflow-auto"
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ type: "tween", duration: 0.25, ease: "easeInOut" }}
+              >
+                <div className="flex items-center justify-end mb-4">
+                  <Button variant="ghost" onClick={() => setOpenMobile(false)}>
+                    <X className="h-5 w-5" />
+                  </Button>
+                </div>
+                {Sidebar}
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       )}
     </>
   );

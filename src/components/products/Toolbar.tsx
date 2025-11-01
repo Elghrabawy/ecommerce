@@ -78,7 +78,7 @@ export function Toolbar({
           <Button
             variant={viewMode === "grid" ? "default" : "outline"}
             size="icon"
-            className="h-11 w-11 rounded-xl"
+            className="h-11 w-11 rounded-xl  hidden lg:inline-flex"
             onClick={() => setViewMode("grid")}
             aria-label="Grid view"
           >
@@ -87,7 +87,7 @@ export function Toolbar({
           <Button
             variant={viewMode === "list" ? "default" : "outline"}
             size="icon"
-            className="h-11 w-11 rounded-xl"
+            className="h-11 w-11 rounded-xl  hidden lg:inline-flex"
             onClick={() => setViewMode("list")}
             aria-label="List view"
           >

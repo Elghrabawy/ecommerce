@@ -24,7 +24,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch, StoreType } from "@/redux/store";
 import { useRouter } from "next/navigation";
 import NProgress from "nprogress";
-import Currency from "@/components/currency";
+import Currency from "@/components/utils/currency";
 import { useAuth } from "@/context/AuthContext";
 
 const listVariants: Variants = {
