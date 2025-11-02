@@ -15,16 +15,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     }
   }, [isAuthenticated, loading, router]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-8 bg-background">
+    <div>
       {children}
     </div>
   );
