@@ -9,6 +9,7 @@ import {
   User,
   Heart,
   Loader2,
+  Package,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -253,19 +254,44 @@ export default function Navbar() {
                         <Moon className="h-4 w-4" />
                       )}
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      aria-label="Cart"
-                      asChild
-                      className="rounded-xl"
-                    >
-                      <Link href="/cart">
-                        <ShoppingCart className="h-4 w-4" />
-                      </Link>
-                    </Button>
 
-                    <Button
+                    {isAuthenticated && (
+                      <>
+                        {" "}
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          aria-label="Cart"
+                          asChild
+                          className="rounded-xl"
+                        >
+                          <Link href="/cart">
+                            <ShoppingCart className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          aria-label="Wishlist"
+                          asChild
+                          className="rounded-xl"
+                        >
+                          <Link href="/wishlist">
+                            <Heart className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          aria-label="Orderes"
+                          asChild
+                          className="rounded-xl"
+                        >
+                          <Link href="/allorders">
+                            <Package className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                        {/* <Button
                       variant="outline"
                       size="icon"
                       aria-label="Profile"
@@ -275,7 +301,9 @@ export default function Navbar() {
                       <Link href="/profile">
                         <User className="h-4 w-4" />
                       </Link>
-                    </Button>
+                    </Button> */}
+                      </>
+                    )}
                   </div>
                 </SheetContent>
               </Sheet>
