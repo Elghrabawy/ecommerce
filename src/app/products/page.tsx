@@ -70,17 +70,16 @@ export default function ProductsPage() {
     dispatch(toggleWishList(product));
   };
 
-  const updateProductsParams = (changes: Partial<ApiProductsParams>) => {
-    setProductsParams((prev) => ({ ...prev, ...changes }));
+  const updateProductsParams = async (changes: Partial<ApiProductsParams>) => {
+    const newProductParams = { ...prodcutsParams, ...changes };
+    setProductsParams(newProductParams);
 
-    
-
-    console.log(prodcutsParams);
+    console.log(newProductParams);
     const newSearchParams = new URLSearchParams();
 
     console.log("start loop");
     const allowed: Array<keyof ApiProductsParams> = ["page","limit","sort","categories","brands"];
-    Object.entries(prodcutsParams).forEach(([key, value]) => {
+    Object.entries(newProductParams).forEach(([key, value]) => {
       if (!allowed.includes(key as keyof ApiProductsParams)) return; // skip unknown keys
       if (value !== undefined && value !== null && value !== "") {
         newSearchParams.set(key, String(value));
@@ -91,7 +90,6 @@ export default function ProductsPage() {
     console.log("end loop", newSearchParams.toString());
 
     router.replace(`/products?${newSearchParams.toString()}`);
-
   };
   const resetProductsParams = () => {
     setProductsParams({
@@ -106,21 +104,6 @@ export default function ProductsPage() {
       NProgress.done();
     }
   }, [isLoading]);
-
-  // useEffect(() => {
-  //   const fetchProducts = async () => {
-  //     setIsLoading(true);
-  //     const response: ProductsResponse = await apiService.fetchProducts(
-  //       prodcutsParams
-  //     );
-  //     setProducts(response.data);
-  //     setTotalPages(response.metadata.numberOfPages);
-  //     setIsLoading(false);
-  //     setIsFirstLoad(false);
-  //   };
-
-  //   fetchProducts();
-  // }, [prodcutsParams]);
 
   const isApiKey = (s: string): s is keyof ApiProductsParams => {
     switch (s) {
