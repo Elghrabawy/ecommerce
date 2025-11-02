@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
@@ -26,6 +26,10 @@ import { AppDispatch, StoreType } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { findInWishList, toggleWishList } from "@/redux/slices/wishListSlice";
 import { useRouter, useSearchParams } from "next/navigation";
+
+
+
+
 
 export default function ProductsPage() {
   const router = useRouter();
@@ -258,6 +262,17 @@ export default function ProductsPage() {
     [viewMode]
   );
 
+  const uid = (prefix = "") =>
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? `${prefix}${(crypto as any).randomUUID()}`
+      : `${prefix}${Date.now().toString(36)}${Math.random().toString(36).slice(2, 9)}`;
+
+  // stable skeleton ids per mount to avoid remounting on each render
+  const skeletonCount = viewMode === "grid" ? 8 : 4;
+  const skeletonIdsRef = useRef<string[]>(
+    Array.from({ length: 12 }).map((_, i) => uid(`skel-${i}-`))
+  );
+
   return (
     <div className="min-h-screen pt-24 pb-16 ">
       <div className="container mx-auto px-4 relative">
@@ -311,7 +326,7 @@ export default function ProductsPage() {
                   )
                 : products.map((p) => (
                     <motion.div
-                      key={p.id || p._id}
+                      key={p._id}
                       initial={{ opacity: 0, y: 12 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true, amount: 0.2 }}

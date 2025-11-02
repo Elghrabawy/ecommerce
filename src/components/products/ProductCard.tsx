@@ -131,7 +131,7 @@ export function ProductCard({
   // GRID MODE
   return (
     <motion.article
-      layout
+      // layout
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="rounded-xl overflow-hidden bg-secondary/10 h-full border border-border/40 hover:shadow-md transition shadow-sm flex flex-col"
