@@ -5,7 +5,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { motion } from "framer-motion";
-import type { Variants } from "framer-motion";
 
 import type { IProduct, ICategory, IBrand } from "@/interfaces";
 
@@ -25,18 +24,10 @@ import {
 } from "@/components";
 import { AppDispatch, StoreType } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCart } from "@/redux/slices/cartSlice";
-import {
-  fetchWishList,
-  findInWishList,
-  toggleWishList,
-} from "@/redux/slices/wishListSlice";
-import LoginDialog from "@/components/auth/loginDialog";
-import { useAuth } from "@/context/AuthContext";
+import { findInWishList, toggleWishList } from "@/redux/slices/wishListSlice";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function ProductsPage() {
-  const { isAuthenticated } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -51,9 +42,6 @@ export default function ProductsPage() {
   const [prodcutsParams, setProductsParams] = useState<ApiProductsParams>({
     page: 1,
   });
-  const [productSearchParams, setProductSearchParams] = useState<
-    ApiProductsParams
-  >({});
 
   const [products, setProducts] = useState<IProduct[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -74,13 +62,17 @@ export default function ProductsPage() {
     const newProductParams = { ...prodcutsParams, ...changes };
     setProductsParams(newProductParams);
 
-    console.log(newProductParams);
     const newSearchParams = new URLSearchParams();
 
     console.log("start loop");
-    const allowed: Array<keyof ApiProductsParams> = ["page","limit","sort","categories","brands"];
+    const allowed: Array<keyof ApiProductsParams> = [
+      "page",
+      "categories",
+      "brands",
+      "price",
+    ];
     Object.entries(newProductParams).forEach(([key, value]) => {
-      if (!allowed.includes(key as keyof ApiProductsParams)) return; // skip unknown keys
+      if (!allowed.includes(key as keyof ApiProductsParams)) return;
       if (value !== undefined && value !== null && value !== "") {
         newSearchParams.set(key, String(value));
       } else {
@@ -91,10 +83,13 @@ export default function ProductsPage() {
 
     router.replace(`/products?${newSearchParams.toString()}`);
   };
+
   const resetProductsParams = () => {
     setProductsParams({
       page: 1,
     });
+
+    router.replace(`/products`);
   };
 
   useEffect(() => {
@@ -104,22 +99,6 @@ export default function ProductsPage() {
       NProgress.done();
     }
   }, [isLoading]);
-
-  const isApiKey = (s: string): s is keyof ApiProductsParams => {
-    switch (s) {
-      case "page":
-      case "limit":
-      case "sort":
-      case "categories":
-      case "brands":
-      case "q":
-      case "minPrice":
-      case "maxPrice":
-        return true;
-      default:
-        return false;
-    }
-  };
 
   const fetchCategories = async () => {
     const response: CategoriesResponse = await apiService.fetchCategories();
@@ -133,40 +112,74 @@ export default function ProductsPage() {
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
     const productsFilterParams: ApiProductsParams = {};
+    let priceMap: Map<"gte" | "lte", number> | undefined;
 
     params.forEach((value, key) => {
-      if (!isApiKey(key)) return; // ignore unknown keys
-      if (value === null || value === undefined || value === "") {
-        return;
-      }
+      if (value === null || value === undefined || value === "") return;
 
-      const k = key as keyof ApiProductsParams;
-
-      if (
-        k === "page"
-      ) {
-        const n = Number(value);
-        if (!Number.isNaN(n)) {
-          (productsFilterParams as ApiProductsParams)[k] = n;
+      switch (key) {
+        case "page":
+        case "limit": {
+          const n = Number(value);
+          if (!Number.isNaN(n)) (productsFilterParams as any)[key] = n;
+          break;
         }
-        return;
-      }
 
-      if (k === "categories" || k === "brands") {
-        (productsFilterParams as ApiProductsParams)[k] = value
-          .split(",")
-          .map((v) => v.trim())
-          .filter(Boolean);
-        return;
+        case "sort": {
+          const allowed = ["-price", "-createdAt", "-quantity"];
+          if (allowed.includes(value))
+            productsFilterParams.sort = value as ApiProductsParams["sort"];
+          break;
+        }
+
+        case "categories":
+        case "brands": {
+          (productsFilterParams as any)[key] = value
+            .split(",")
+            .map((v) => v.trim())
+            .filter(Boolean);
+          break;
+        }
+
+        case "keyword": {
+          productsFilterParams.keyword = value;
+          break;
+        }
+        case "price[gte]":
+        case "price_gte":
+        case "minPrice": {
+          const n = Number(value);
+          if (!Number.isNaN(n)) {
+            priceMap = priceMap ?? new Map<"gte" | "lte", number>();
+            priceMap.set("gte", n);
+          }
+          break;
+        }
+
+        case "price[lte]":
+        case "price_lte":
+        case "maxPrice": {
+          const n = Number(value);
+          if (!Number.isNaN(n)) {
+            priceMap = priceMap ?? new Map<"gte" | "lte", number>();
+            priceMap.set("lte", n);
+          }
+          break;
+        }
+
+        default:
+          break;
       }
     });
+
+    if (priceMap) {
+      productsFilterParams.price = priceMap as any;
+    }
 
     setProductsParams((prev) => ({
       ...prev,
       ...(productsFilterParams as Partial<ApiProductsParams>),
     }));
-
-    console.log("product fillter params", productsFilterParams);
 
     const fetchProducts = async () => {
       setIsLoading(true);
@@ -189,7 +202,50 @@ export default function ProductsPage() {
     fetchProducts();
   }, [searchParams]);
 
+  const setProductParamsFromUrl = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    const productsFilterParams: ApiProductsParams = {};
+    params.forEach((value, key) => {
+      if (value === null || value === undefined || value === "") return;
+      switch (key) {
+        case "page":
+        case "limit": {
+          const n = Number(value);
+          if (!Number.isNaN(n)) (productsFilterParams as any)[key] = n;
+          break;
+        }
+
+        case "sort": {
+          const allowed = ["-price", "-createdAt", "-quantity"];
+          if (allowed.includes(value))
+            productsFilterParams.sort = value as ApiProductsParams["sort"];
+          break;
+        }
+        case "categories":
+        case "brands": {
+          (productsFilterParams as any)[key] = value
+
+            .split(",")
+            .map((v) => v.trim())
+            .filter(Boolean);
+          break;
+        }
+        case "keyword": {
+          productsFilterParams.keyword = value;
+          break;
+        }
+        default:
+          break;
+      }
+    });
+    setProductsParams((prev) => ({
+      ...prev,
+      ...(productsFilterParams as Partial<ApiProductsParams>),
+    }));
+  };
+
   useEffect(() => {
+    setProductParamsFromUrl();
     fetchBrands();
     fetchCategories();
   }, []);
@@ -242,7 +298,6 @@ export default function ProductsPage() {
                         transition={{ duration: 0.45, ease: "easeOut" }}
                         className="relative"
                       >
-                        {/* reveal shade that fades away as the card comes into view */}
                         <motion.div
                           className="absolute inset-0 rounded-2xl pointer-events-none z-20 bg-gradient-to-b from-black/12 to-transparent"
                           initial={{ opacity: 0.18 }}

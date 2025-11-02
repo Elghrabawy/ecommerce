@@ -107,9 +107,7 @@ export default function CategoriesPage() {
                     className="group rounded-2xl overflow-hidden border border-border/40 bg-gradient-to-b from-white/2 to-background/2 shadow-lg relative"
                   >
                     <Link
-                      href={`/products?category=${encodeURIComponent(
-                        cat.slug
-                      )}`}
+                      href={`/products?categories=${cat._id}`}
                       prefetch={false}
                       className="block"
                     >
