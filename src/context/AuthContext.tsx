@@ -1,15 +1,13 @@
 "use client";
 
-import LoginForm from "@/app/(auth)/login/LoginForm";
 import LoginDialog from "@/components/auth/loginDialog";
 import { ILogin, IProcessResponse, IRegister } from "@/interfaces";
 import { apiService } from "@/service/apiService";
-import { Dialog, DialogContent, DialogPortal } from "@radix-ui/react-dialog";
-import { ok } from "assert";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 type AuthUser = {
   name?: string;
+  id?: string;
 };
 
 type AuthContextType = {
@@ -33,6 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [onAuthorizedCallback, setOnAuthorizedCallback] = useState<(() => void) | null | undefined>(null);
   const isAuthenticated = Boolean(user);
 
+
   const verify = async () => {
     console.log("start verify");
     setLoading(true);
@@ -41,6 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!token) {
         setUser(null);
         setLoading(false);
+        console.log("verify failed");
         return false;
       }
       const response = await apiService.verify();
@@ -48,10 +48,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(null);
         apiService.setToken(null);
         setLoading(false);
+        console.log("verify failed");
         return false;
       }
-
-      setUser({ name: response?.decoded.name ?? null });
+      
+      console.log("verify success");
+      setUser({ name: response?.decoded.name ?? null, id: response?.decoded.id ?? null });
       return true;
     } catch {
       setUser(null);
@@ -71,6 +73,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         apiService.setToken(response.token);
         setUser(response.user);
         setLoading(false);
+        verify();
         return { ok: true, message: "Login successful" };
       } else {
         setLoading(false);

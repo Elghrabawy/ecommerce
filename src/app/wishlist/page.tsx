@@ -13,18 +13,17 @@ import { Heart, Trash2 } from "lucide-react";
 import Currency from "@/components/utils/currency";
 import NProgress from "nprogress";
 import { useAuth } from "@/context/AuthContext";
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
+import NotAuthorized from "@/components/auth/notAccessPage";
 
 export default function WishlistPage() {
-    const { isAuthenticated } = useAuth();
-
-
+  const { isAuthenticated } = useAuth();
 
   const dispatch = useDispatch<AppDispatch>();
 
   const wishState = useSelector(
     (s: StoreType) =>
-      (s?.wishlist)?.wishList ?? {
+      s?.wishlist?.wishList ?? {
         isFetching: false,
         firstFetching: false,
         products: [] as IProduct[],
@@ -40,44 +39,26 @@ export default function WishlistPage() {
     toggle(product);
   };
 
-
   useEffect(() => {
     NProgress.done();
-    if(isAuthenticated) {
+    if (isAuthenticated) {
       dispatch(fetchWishList());
     }
   }, []);
 
-    if (!isAuthenticated) {
+  if (!isAuthenticated) {
     return (
-      <div className="mt-22 min-h-screen py-16 bg-gradient-to-b from-background/60 to-background">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.36 }} className="rounded-2xl border border-border/40 p-8 text-center bg-background shadow-lg">
-            <div className="flex items-center justify-center mb-4">
-              <Heart className="h-10 w-10 text-primary" />
-            </div>
-            <h1 className="text-2xl font-extrabold mb-2">Sign in to view your wishlist</h1>
-            <p className="text-sm text-muted-foreground mb-6">You need to be logged in to access your wishlist. Login or create an account to continue.</p>
-
-            <div className="flex items-center justify-center gap-3">
-              <Link href="/login" onClick={() => NProgress.start()}>
-                <Button className="flex items-center gap-2"> Login</Button>
-              </Link>
-
-              <Link href="/register" onClick={() => NProgress.start()}>
-                <Button variant="outline" className="flex items-center gap-2"> Create account</Button>
-              </Link>
-
-              <Link href="/products" onClick={() => NProgress.start()}>
-                <Button variant="ghost" className="flex items-center gap-2"> Browse</Button>
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </div>
+      <NotAuthorized
+        icon={<Heart className="h-10 w-10 text-primary" />}
+        title="Sign in to view your wishlist"
+        description="You need to be logged in to access your wishlist. Login or create an account to continue."
+        primary={{ label: "Login", href: "/login" }}
+        secondary={{ label: "Create account", href: "/register" }}
+        tertiary={{ label: "Browse", href: "/products" }}
+      />
     );
   }
-  
+
   return (
     <div className="min-h-screen pt-24 pb-12">
       <div className="container mx-auto px-4 max-w-6xl">

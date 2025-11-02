@@ -26,6 +26,7 @@ import { useRouter } from "next/navigation";
 import NProgress from "nprogress";
 import Currency from "@/components/utils/currency";
 import { useAuth } from "@/context/AuthContext";
+import NotAuthorized from "@/components/auth/notAccessPage";
 
 const listVariants: Variants = {
   hidden: { opacity: 0, y: 8, scale: 0.995 },
@@ -120,7 +121,22 @@ export default function CartPage() {
     [cart]
   );
 
+  
   if (!isAuthenticated) {
+    return (
+      <NotAuthorized
+        icon={<ShoppingCart className="h-10 w-10 text-primary" />}
+        title="Sign in to view your cart"
+        description="You need to be logged in to access your cart. Login or create an account to continue."
+        primary={{ label: "Login", href: "/login" }}
+        secondary={{ label: "Create account", href: "/register" }}
+        tertiary={{ label: "Browse", href: "/products" }}
+      />
+    );
+  }
+
+  if (!isAuthenticated) {
+    
     return (
       <div className="mt-22 min-h-screen py-16 bg-gradient-to-b from-background/60 to-background">
         <div className="container mx-auto px-4 max-w-3xl">
