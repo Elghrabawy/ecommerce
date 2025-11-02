@@ -122,7 +122,6 @@ export default function ProductsPage() {
   //   fetchProducts();
   // }, [prodcutsParams]);
 
-  // runtime type guard for allowed filter keys (adjust to match ApiProductsParams)
   const isApiKey = (s: string): s is keyof ApiProductsParams => {
     switch (s) {
       case "page":
@@ -161,29 +160,24 @@ export default function ProductsPage() {
       const k = key as keyof ApiProductsParams;
 
       if (
-        k === "page" ||
-        k === "limit" ||
-        k === "price"
+        k === "page"
       ) {
         const n = Number(value);
         if (!Number.isNaN(n)) {
-          (productsFilterParams as any)[k] = n;
+          (productsFilterParams as ApiProductsParams)[k] = n;
         }
         return;
       }
 
       if (k === "categories" || k === "brands") {
-        (productsFilterParams as any)[k] = value
+        (productsFilterParams as ApiProductsParams)[k] = value
           .split(",")
           .map((v) => v.trim())
           .filter(Boolean);
         return;
       }
-
-      (productsFilterParams as any)[k] = value;
     });
 
-    // merge with existing products params (preserve page if not specified)
     setProductsParams((prev) => ({
       ...prev,
       ...(productsFilterParams as Partial<ApiProductsParams>),
