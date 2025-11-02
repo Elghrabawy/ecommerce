@@ -262,17 +262,6 @@ export default function ProductsPage() {
     [viewMode]
   );
 
-  const uid = (prefix = "") =>
-    typeof crypto !== "undefined" && "randomUUID" in crypto
-      ? `${prefix}${(crypto as any).randomUUID()}`
-      : `${prefix}${Date.now().toString(36)}${Math.random().toString(36).slice(2, 9)}`;
-
-  // stable skeleton ids per mount to avoid remounting on each render
-  const skeletonCount = viewMode === "grid" ? 8 : 4;
-  const skeletonIdsRef = useRef<string[]>(
-    Array.from({ length: 12 }).map((_, i) => uid(`skel-${i}-`))
-  );
-
   return (
     <div className="min-h-screen pt-24 pb-16 ">
       <div className="container mx-auto px-4 relative">
