@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { motion } from "framer-motion";
+import type { Variants } from "framer-motion";
 
 import type { IProduct, ICategory, IBrand } from "@/interfaces";
 
@@ -32,11 +33,12 @@ import {
 } from "@/redux/slices/wishListSlice";
 import LoginDialog from "@/components/auth/loginDialog";
 import { useAuth } from "@/context/AuthContext";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function ProductsPage() {
   const { isAuthenticated } = useAuth();
-
-
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [searchInput, setSearchInput] = useState("");
@@ -49,6 +51,9 @@ export default function ProductsPage() {
   const [prodcutsParams, setProductsParams] = useState<ApiProductsParams>({
     page: 1,
   });
+  const [productSearchParams, setProductSearchParams] = useState<
+    ApiProductsParams
+  >({});
 
   const [products, setProducts] = useState<IProduct[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -67,6 +72,26 @@ export default function ProductsPage() {
 
   const updateProductsParams = (changes: Partial<ApiProductsParams>) => {
     setProductsParams((prev) => ({ ...prev, ...changes }));
+
+    
+
+    console.log(prodcutsParams);
+    const newSearchParams = new URLSearchParams();
+
+    console.log("start loop");
+    const allowed: Array<keyof ApiProductsParams> = ["page","limit","sort","categories","brands"];
+    Object.entries(prodcutsParams).forEach(([key, value]) => {
+      if (!allowed.includes(key as keyof ApiProductsParams)) return; // skip unknown keys
+      if (value !== undefined && value !== null && value !== "") {
+        newSearchParams.set(key, String(value));
+      } else {
+        newSearchParams.delete(key);
+      }
+    });
+    console.log("end loop", newSearchParams.toString());
+
+    router.replace(`/products?${newSearchParams.toString()}`);
+
   };
   const resetProductsParams = () => {
     setProductsParams({
@@ -82,33 +107,112 @@ export default function ProductsPage() {
     }
   }, [isLoading]);
 
+  // useEffect(() => {
+  //   const fetchProducts = async () => {
+  //     setIsLoading(true);
+  //     const response: ProductsResponse = await apiService.fetchProducts(
+  //       prodcutsParams
+  //     );
+  //     setProducts(response.data);
+  //     setTotalPages(response.metadata.numberOfPages);
+  //     setIsLoading(false);
+  //     setIsFirstLoad(false);
+  //   };
+
+  //   fetchProducts();
+  // }, [prodcutsParams]);
+
+  // runtime type guard for allowed filter keys (adjust to match ApiProductsParams)
+  const isApiKey = (s: string): s is keyof ApiProductsParams => {
+    switch (s) {
+      case "page":
+      case "limit":
+      case "sort":
+      case "categories":
+      case "brands":
+      case "q":
+      case "minPrice":
+      case "maxPrice":
+        return true;
+      default:
+        return false;
+    }
+  };
+
+  const fetchCategories = async () => {
+    const response: CategoriesResponse = await apiService.fetchCategories();
+    setCategories(response.data);
+  };
+  const fetchBrands = async () => {
+    const response = await apiService.fetchBrands();
+    setBrands(response.data);
+  };
+
   useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    const productsFilterParams: ApiProductsParams = {};
+
+    params.forEach((value, key) => {
+      if (!isApiKey(key)) return; // ignore unknown keys
+      if (value === null || value === undefined || value === "") {
+        return;
+      }
+
+      const k = key as keyof ApiProductsParams;
+
+      if (
+        k === "page" ||
+        k === "limit" ||
+        k === "price"
+      ) {
+        const n = Number(value);
+        if (!Number.isNaN(n)) {
+          (productsFilterParams as any)[k] = n;
+        }
+        return;
+      }
+
+      if (k === "categories" || k === "brands") {
+        (productsFilterParams as any)[k] = value
+          .split(",")
+          .map((v) => v.trim())
+          .filter(Boolean);
+        return;
+      }
+
+      (productsFilterParams as any)[k] = value;
+    });
+
+    // merge with existing products params (preserve page if not specified)
+    setProductsParams((prev) => ({
+      ...prev,
+      ...(productsFilterParams as Partial<ApiProductsParams>),
+    }));
+
+    console.log("product fillter params", productsFilterParams);
+
     const fetchProducts = async () => {
       setIsLoading(true);
-      const response: ProductsResponse = await apiService.fetchProducts(
-        prodcutsParams
-      );
-      setProducts(response.data);
-      setTotalPages(response.metadata.numberOfPages);
-      setIsLoading(false);
-      setIsFirstLoad(false);
+      try {
+        const response: ProductsResponse = await apiService.fetchProducts(
+          productsFilterParams
+        );
+        setProducts(response.data);
+        setTotalPages(response.metadata?.numberOfPages ?? 1);
+      } catch (err) {
+        console.error("fetchProducts error", err);
+        setProducts([]);
+        setTotalPages(1);
+      } finally {
+        setIsLoading(false);
+        setIsFirstLoad(false);
+      }
     };
 
     fetchProducts();
-  }, [prodcutsParams]);
-
-
+  }, [searchParams]);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      const response: CategoriesResponse = await apiService.fetchCategories();
-      setCategories(response.data);
-    };
-    const fetchBrands = async () => {
-      const response = await apiService.fetchBrands();
-      setBrands(response.data);
-    };
-
     fetchBrands();
     fetchCategories();
   }, []);
@@ -120,8 +224,6 @@ export default function ProductsPage() {
         : "space-y-6",
     [viewMode]
   );
-
-  
 
   return (
     <div className="min-h-screen pt-24 pb-16 ">
@@ -135,7 +237,6 @@ export default function ProductsPage() {
           setSort={setSort}
           onOpenFilters={() => setOpenMobileFilters(true)}
           total={products.length}
-
         />
 
         <div className="mt-8 flex lg:gap-8">
@@ -185,13 +286,6 @@ export default function ProductsPage() {
                       transition={{ duration: 0.45, ease: "easeOut" }}
                       className="relative"
                     >
-                      <motion.div
-                        className="absolute inset-0 rounded-2xl pointer-events-none z-20 bg-gradient-to-b from-black/12 to-transparent"
-                        initial={{ opacity: 0.18 }}
-                        whileInView={{ opacity: 0 }}
-                        viewport={{ once: true, amount: 0.2 }}
-                        transition={{ duration: 0.7, ease: "circOut" }}
-                      />
                       <ProductCard
                         product={p}
                         viewMode={viewMode}
@@ -201,6 +295,7 @@ export default function ProductsPage() {
                     </motion.div>
                   ))}
             </motion.div>
+
             <Pagination
               page={prodcutsParams.page || 1}
               pages={totalPages}
@@ -209,7 +304,6 @@ export default function ProductsPage() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }
