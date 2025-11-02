@@ -121,7 +121,7 @@ export default function ProductsPage() {
         case "page":
         case "limit": {
           const n = Number(value);
-          if (!Number.isNaN(n)) (productsFilterParams as any)[key] = n;
+          if (!Number.isNaN(n)) (productsFilterParams as ApiProductsParams)[key] = n;
           break;
         }
 
@@ -134,7 +134,7 @@ export default function ProductsPage() {
 
         case "categories":
         case "brands": {
-          (productsFilterParams as any)[key] = value
+          (productsFilterParams as ApiProductsParams)[key] = value
             .split(",")
             .map((v) => v.trim())
             .filter(Boolean);
@@ -173,7 +173,7 @@ export default function ProductsPage() {
     });
 
     if (priceMap) {
-      productsFilterParams.price = priceMap as any;
+      productsFilterParams.price = priceMap as ApiProductsParams["price"];
     }
 
     setProductsParams((prev) => ({
@@ -211,7 +211,7 @@ export default function ProductsPage() {
         case "page":
         case "limit": {
           const n = Number(value);
-          if (!Number.isNaN(n)) (productsFilterParams as any)[key] = n;
+          if (!Number.isNaN(n)) (productsFilterParams as ApiProductsParams)[key] = n;
           break;
         }
 
@@ -223,7 +223,7 @@ export default function ProductsPage() {
         }
         case "categories":
         case "brands": {
-          (productsFilterParams as any)[key] = value
+          (productsFilterParams as ApiProductsParams)[key] = value
 
             .split(",")
             .map((v) => v.trim())
