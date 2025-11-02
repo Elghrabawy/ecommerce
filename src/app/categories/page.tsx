@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { apiService } from "@/service/apiService";
 import nProgress from "nprogress";
 import { ICategory } from "@/interfaces";
+import type { Variants } from "framer-motion";
 
 const container = {
   hidden: { opacity: 1 },
@@ -19,16 +20,17 @@ const container = {
   },
 };
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: { opacity: 0, y: 12, scale: 0.985 },
   show: {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { duration: 0.36, ease: "easeOut" },
+    transition: { duration: 0.36, ease: [0.22, 1, 0.36, 1] },
   },
   hover: { scale: 1.03, transition: { duration: 0.18 } },
 };
+
 
 function SkeletonCard() {
   return (

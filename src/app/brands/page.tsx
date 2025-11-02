@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { apiService } from "@/service/apiService";
 import nProgress from "nprogress";
 import { IBrand } from "@/interfaces";
+import type { Variants } from "framer-motion";
 
 const container = {
   hidden: { opacity: 1 },
@@ -19,13 +20,13 @@ const container = {
   },
 };
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: { opacity: 0, y: 12, scale: 0.985 },
   show: {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { duration: 0.36, ease: "easeOut" },
+    transition: { duration: 0.36, ease: [0.22, 1, 0.36, 1] },
   },
   hover: { scale: 1.03, transition: { duration: 0.18 } },
 };
@@ -97,24 +98,24 @@ export default function BrandsPage() {
                 animate="show"
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
               >
-                {brands?.map((cat) => (
+                {brands?.map((brand) => (
                   <motion.article
-                    key={cat._id}
+                    key={brand._id}
                     variants={cardVariants}
                     whileHover="hover"
                     className="group rounded-2xl overflow-hidden border border-border/40 bg-gradient-to-b from-white/2 to-background/2 shadow-lg relative"
                   >
                     <Link
                       href={`/products?brand=${encodeURIComponent(
-                        cat.slug
+                        brand.slug
                       )}`}
                       prefetch={false}
                       className="block"
                     >
                       <div className="relative h-45 sm:h-40 md:h-50 w-full">
                         <Image
-                          src={cat.image}
-                          alt={cat.name}
+                          src={brand.image}
+                          alt={brand.name}
                           fill
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           className="object-cover transition-transform duration-400 group-hover:scale-105"
@@ -126,7 +127,7 @@ export default function BrandsPage() {
                       <div className="p-4 flex items-center justify-between gap-3">
                         <div className="min-w-0">
                           <h3 className="text-lg font-semibold truncate">
-                            {cat.name}
+                            {brand.name}
                           </h3>
                         </div>
 
