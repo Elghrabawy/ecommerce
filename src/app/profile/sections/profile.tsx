@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Edit2 } from "lucide-react";
 import { apiService } from "@/service/apiService";
 import type { IUserData } from "@/interfaces";
-import type { IShippingAddress } from "@/interfaces/order";
+import type { IShippingAddress } from "@/interfaces";
 import { useAuth } from "@/context/AuthContext";
 
 const profileSchema = z.object({
@@ -66,7 +66,7 @@ export default function ProfileSection({ user, setUser, addresses, setAddresses 
     setSaving(true);
     try {
       const name = `${data.firstName} ${data.lastName ?? ""}`.trim();
-      const payload: Partial<any> = {};
+      const payload: Partial<IUserData> = {};
       if (name && name !== user.name) payload.name = name;
       if (data.email !== user.email) payload.email = data.email;
       if ((data.phone ?? "") !== (user.phone ?? "")) payload.phone = data.phone;
@@ -76,9 +76,10 @@ export default function ProfileSection({ user, setUser, addresses, setAddresses 
       }
 
       const res = await apiService.updateUserInfo(payload);
-      const updated = res?.data ?? res;
+      const updated = res?.data ?? null;
       if (updated) {
-        setUser((prev) => ({ ...(prev ?? {}), ...(updated as IUserData) }));
+        const merged: IUserData = ({ ...(user ?? {}), ...(payload as Partial<IUserData>) } as IUserData);
+        setUser(merged);
         try { await auth?.verify?.(); } catch {}
         const parts = ((updated.name as string) ?? name).trim().split(" ");
         form.reset({
