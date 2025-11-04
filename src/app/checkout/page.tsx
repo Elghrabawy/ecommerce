@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import AddressDialog from "@/components/checkout/AddressDialog";
-import type { IShippingAddress } from "@/interfaces/order";
+import type { IShippingAddress } from "@/interfaces";
 import NProgress from "nprogress";
 import { Badge } from "@/components/ui/badge";
 import Currency from "@/components/utils/currency";

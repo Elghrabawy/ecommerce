@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import AddressCard from "@/components/AddressCard";
 import AddressDialog from "@/components/checkout/AddressDialog";
-import type { IShippingAddress } from "@/interfaces/order";
+import type { IShippingAddress } from "@/interfaces";
 import { apiService } from "@/service/apiService";
 
 type Props = {

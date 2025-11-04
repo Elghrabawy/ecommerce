@@ -4,7 +4,7 @@ import React from "react";
 import { MapPin, Edit2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import type { IShippingAddress } from "@/interfaces/order";
+import type { IShippingAddress } from "@/interfaces";
 
 type Props = {
   address: IShippingAddress;
