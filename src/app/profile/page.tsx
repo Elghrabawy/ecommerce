@@ -29,7 +29,11 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    
     let mounted = true;
+    if(!auth.isAuthenticated) {
+      router.push("/login");
+    }
 
     const handleFetchUser = async (userId?: string) => {
       if (!userId) return null;
@@ -74,18 +78,15 @@ export default function ProfilePage() {
       }
     };
 
+    
     load();
+
 
     return () => {
       mounted = false;
     };
   }, [auth?.user?.id]);
 
-  useEffect(() => {
-    if(!auth.isAuthenticated) {
-      router.replace("/login");
-    }
-  }, [])
   if (loading) {
     return (
       <div className="min-h-screen py-12 px-4 container mx-auto max-w-6xl  mt-22">

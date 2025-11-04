@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Star } from "lucide-react";
+import { Package, PackageSearch, Star } from "lucide-react";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import Image from "next/image";
@@ -11,6 +11,7 @@ import AddToCartButton from "@/components/products/AddToCartButton";
 import WishlistButton from "@/components/products/WishlistButton";
 import Currency from "../utils/currency";
 import { IProduct } from "@/interfaces";
+import IconLoadingImage from "../IconLoadingImage";
 
 type ProductCardProps = {
   product: IProduct;
@@ -147,13 +148,15 @@ export function ProductCard({
                 key={i}
                 className="w-full h-full flex-shrink-0 relative overflow-hidden"
               >
-                <Image
+                <IconLoadingImage
                   height={400}
                   width={400}
                   src={img}
                   alt={product.title + i}
                   className="object-cover w-full h-full"
-                />
+                  icon={PackageSearch}
+                /> 
+          
               </div>
             ))}
           </motion.div>

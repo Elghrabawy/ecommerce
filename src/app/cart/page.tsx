@@ -12,6 +12,7 @@ import {
   ShoppingCart,
   CreditCard,
   Loader2,
+  Package,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import {
@@ -135,53 +136,6 @@ export default function CartPage() {
     );
   }
 
-  if (!isAuthenticated) {
-    
-    return (
-      <div className="mt-22 min-h-screen py-16 bg-gradient-to-b from-background/60 to-background">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.36 }}
-            className="rounded-2xl border border-border/40 p-8 text-center bg-background shadow-lg"
-          >
-            <div className="flex items-center justify-center mb-4">
-              <ShoppingCart className="h-10 w-10 text-primary" />
-            </div>
-            <h1 className="text-2xl font-extrabold mb-2">
-              Sign in to view your cart
-            </h1>
-            <p className="text-sm text-muted-foreground mb-6">
-              You need to be logged in to access your cart. Login or create an
-              account to continue.
-            </p>
-
-            <div className="flex items-center justify-center gap-3">
-              <Link href="/login" onClick={() => NProgress.start()}>
-                <Button className="flex items-center gap-2"> Login</Button>
-              </Link>
-
-              <Link href="/register" onClick={() => NProgress.start()}>
-                <Button variant="outline" className="flex items-center gap-2">
-                  {" "}
-                  Create account
-                </Button>
-              </Link>
-
-              <Link href="/products" onClick={() => NProgress.start()}>
-                <Button variant="ghost" className="flex items-center gap-2">
-                  {" "}
-                  Browse
-                </Button>
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="mt-22 min-h-screen py-16 bg-gradient-to-b from-background/60 to-background">
       <div className="container mx-auto px-4 max-w-6xl">
@@ -282,9 +236,8 @@ export default function CartPage() {
                           alt={p?.title ?? it._id}
                           fill
                           className="object-cover"
-                          sizes="80px"
                         />
-                      </div>
+                        </div>
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-3">
