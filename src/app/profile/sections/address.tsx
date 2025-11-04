@@ -11,7 +11,7 @@ import { apiService } from "@/service/apiService";
 
 type Props = {
   addresses: IShippingAddress[];
-  setAddresses: (a: IShippingAddress[]) => void;
+  setAddresses: React.Dispatch<React.SetStateAction<IShippingAddress[]>>;
 };
 
 export default function AddressesSection({ addresses, setAddresses }: Props) {
@@ -30,8 +30,8 @@ export default function AddressesSection({ addresses, setAddresses }: Props) {
 
   const handleRemove = async (id?: string) => {
     if (!id) return;
-    // optimistic update
-    setAddresses((prev) => prev.filter((a) => a._id !== id));
+    const updated : IShippingAddress[] = addresses.filter((a) => a._id !== id) as IShippingAddress[];
+    setAddresses(updated);
     try {
       const res = await apiService.deleteAddress(id);
       if (res?.status === "success" && Array.isArray(res.data)) {
@@ -84,17 +84,7 @@ export default function AddressesSection({ addresses, setAddresses }: Props) {
           setDialogOpen(v);
           if (!v) setEditingAddress(null);
         }}
-        setAddresses={(payload) => {
-          if (!payload) return;
-          if (Array.isArray(payload)) { setAddresses(payload); return; }
-          const a = payload as IShippingAddress;
-          if (!a || !a._id) return;
-          setAddresses((prev) => {
-            const exists = prev.find((x) => x._id === a._id);
-            if (exists) return prev.map((p) => (p._id === a._id ? a : p));
-            return [a, ...prev];
-          });
-        }}
+        setAddresses={setAddresses}
       />
     </div>
   );
