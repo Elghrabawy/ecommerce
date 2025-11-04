@@ -47,6 +47,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ProvidersContainer>
             <Navbar />
+            <span className="mt-22 block"></span>
             <div className="container">{children}</div>
           </ProvidersContainer>
         </ThemeProvider>

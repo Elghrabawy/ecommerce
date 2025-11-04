@@ -8,3 +8,7 @@ export * from './subcategory';
 export * from './cart';
 
 export * from './auth';
+
+export * from './user';
+
+export * from './address';

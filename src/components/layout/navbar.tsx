@@ -291,7 +291,7 @@ export default function Navbar() {
                             <Package className="h-4 w-4" />
                           </Link>
                         </Button>
-                        {/* <Button
+                        <Button
                       variant="outline"
                       size="icon"
                       aria-label="Profile"
@@ -301,7 +301,7 @@ export default function Navbar() {
                       <Link href="/profile">
                         <User className="h-4 w-4" />
                       </Link>
-                    </Button> */}
+                    </Button>
                       </>
                     )}
                   </div>
@@ -460,7 +460,7 @@ export default function Navbar() {
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <Link href="/settings">Settings</Link>
+                          <Link href="/profile">Settings</Link>
                         </DropdownMenuItem>
                         <Separator />
                         <DropdownMenuItem

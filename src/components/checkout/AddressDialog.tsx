@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CheckCircle, Loader2, X } from "lucide-react";
@@ -14,22 +14,24 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { IShippingAddress } from "@/interfaces/order";
+import { IShippingAddress } from "@/interfaces";
 import { apiService } from "@/service/apiService";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addressSchema } from "@/schemas/AddressSchema"
+import { addressSchema } from "@/schemas/AddressSchema";
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   setAddresses: React.Dispatch<React.SetStateAction<IShippingAddress[]>>;
+  editedAddress?: IShippingAddress | null;
 }
 
 export default function AddressDialog({
   open,
   onOpenChange,
   setAddresses,
+  editedAddress,
 }: Props) {
   const [submitting, setSubmitting] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
@@ -45,6 +47,29 @@ export default function AddressDialog({
     setSubmitting(false);
     return response;
   };
+  const handleEditAddress = async (data: IShippingAddress) => {
+    setSubmitting(true);
+    const response = await apiService.updateAddress(editedAddress?._id ?? "", data);
+    if (response?.data) {
+      setSuccess(true);
+      onSuccess();
+      setAddresses(prev => {
+        return prev.map(addr => addr._id === response.data._id ? response.data : addr);
+      });
+    }
+    setSubmitting(false);
+    return response;
+  };
+  const defaultValues = {
+    name: editedAddress?.name || "",
+    phone: editedAddress?.phone || "",
+    city: editedAddress?.city || "",
+    details: editedAddress?.details || "",
+  };
+
+  useEffect(() => {
+    reset(defaultValues);
+  }, [open]);
 
   const {
     handleSubmit,
@@ -52,12 +77,7 @@ export default function AddressDialog({
     formState: { errors },
     reset,
   } = useForm({
-    defaultValues: {
-      name: "",
-      phone: "",
-      city: "",
-      details: "",
-    },
+    defaultValues: defaultValues,
     resolver: zodResolver(addressSchema),
   });
 
@@ -65,12 +85,7 @@ export default function AddressDialog({
     setTimeout(() => {
       setSuccess(false);
       onOpenChange(false);
-      reset({
-        name: "",
-        phone: "",
-        city: "",
-        details: "",
-      });
+      reset(defaultValues);
     }, 800);
   };
 
@@ -81,7 +96,7 @@ export default function AddressDialog({
           <DialogHeader>
             <div className="flex items-center justify-between">
               <DialogTitle className="text-lg font-semibold">
-                { "Add address"}
+                {"Add address"}
               </DialogTitle>
             </div>
 
@@ -144,7 +159,7 @@ export default function AddressDialog({
                 className="flex-1"
                 disabled={submitting || success}
                 onClick={handleSubmit((data) => {
-                  handleAddAddress(data);
+                  editedAddress ? handleEditAddress(data) : handleAddAddress(data);
                 })}
               >
                 {submitting ? (
@@ -155,6 +170,8 @@ export default function AddressDialog({
                   <>
                     <CheckCircle className="h-4 w-4 text-emerald-500" /> Done
                   </>
+                ) : editedAddress ? (
+                  "Save Changes"
                 ) : (
                   "Add"
                 )}

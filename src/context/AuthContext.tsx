@@ -3,6 +3,7 @@
 import LoginDialog from "@/components/auth/loginDialog";
 import { ILogin, IProcessResponse, IRegister } from "@/interfaces";
 import { apiService } from "@/service/apiService";
+import { useRouter } from "next/router";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 type AuthUser = {
@@ -30,7 +31,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [openLoginDialog, setOpenLoginDialog] = useState<boolean>(false);
   const [onAuthorizedCallback, setOnAuthorizedCallback] = useState<(() => void) | null | undefined>(null);
   const isAuthenticated = Boolean(user);
-
 
   const verify = async () => {
     console.log("start verify");

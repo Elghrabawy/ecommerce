@@ -1,12 +1,7 @@
+import { IShippingAddress } from "./address";
 import { IProduct } from "./product";
 
-export interface IShippingAddress {
-  _id?: string;
-  name?: string;
-  details: string;
-  phone: string;
-  city: string;
-}
+
 
 export interface IOrderUser {
   _id: string;

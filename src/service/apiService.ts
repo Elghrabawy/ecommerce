@@ -135,6 +135,35 @@ class ApiService {
     return response;
   }
 
+  async getUserInfo(userId: string) {
+    const response = await fetch(this.baseUrl + `/users/` + userId, {
+      headers: this.getHeader(),
+    }).then((res) => res.json());
+    return response;
+  }
+
+  async updateUserInfo(data: Partial<IRegister>) {
+    const response = await fetch(this.baseUrl + `/users/updateMe`, {
+      method: "PUT",
+      headers: this.getHeader(),
+      body: JSON.stringify(data),
+    }).then((res) => res.json());
+    return response;
+  }
+
+  async changeUserPassword(data: {
+    currentPassword: string;
+    password: string;
+    rePassword: string;
+  }) {
+    const response = await fetch(this.baseUrl + `/users/changeMyPassword`, {
+      method: "PUT",
+      headers: this.getHeader(),
+      body: JSON.stringify(data),
+    }).then((res) => res.json());
+    return response;
+  }
+
   // PRODUCT end points
   async fetchProducts(params: ApiProductsParams): Promise<ProductsResponse> {
     const searchParams = buildProductsQuery(params);
@@ -256,6 +285,23 @@ class ApiService {
       headers: this.getHeader(),
     }).then((res) => res.json());
 
+    return response;
+  }
+
+  async deleteAddress(addressId: string) {
+    const response = await fetch(this.baseUrl + `/addresses/${addressId}`, {
+      method: "DELETE",
+      headers: this.getHeader(),
+    }).then((res) => res.json());
+    return response;
+  }
+
+  async updateAddress(addressId: string, data: IShippingAddress) {
+    const response = await fetch(this.baseUrl + `/addresses/${addressId}`, {
+      method: "PUT",
+      headers: this.getHeader(),
+      body: JSON.stringify(data),
+    }).then((res) => res.json());
     return response;
   }
 

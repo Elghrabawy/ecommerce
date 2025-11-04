@@ -15,6 +15,7 @@ import {
   MapPin,
   Star,
   CheckCircle,
+  Trash2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import AddressDialog from "@/components/checkout/AddressDialog";
@@ -22,6 +23,7 @@ import type { IShippingAddress } from "@/interfaces/order";
 import NProgress from "nprogress";
 import { Badge } from "@/components/ui/badge";
 import Currency from "@/components/utils/currency";
+import AddressCard from "@/components/AddressCard";
 
 const listItemVariants = {
   hidden: { opacity: 0, y: 8 },
@@ -104,6 +106,8 @@ export default function CheckoutPage() {
 
   const openEditModal = (idx: number) => {
     setEditingIndex(idx);
+    console.log("editing index:", idx);
+    console.log("editing address:", addresses[idx]);
     setIsModalOpen(true);
   };
 
@@ -115,6 +119,14 @@ export default function CheckoutPage() {
     setSelectedAddressIndex(idx);
     setShowAddresses(false);
   };
+
+  const handleRemoveAddress = async (id: string) => {
+    setAddresses(prev => prev.filter(addr => addr._id !== id));
+    const response = await apiService.deleteAddress(id);
+    if(response?.status === "success") {
+      setAddresses(response?.data);
+    }
+  }
 
   const handlePlaceOrder = async () => {
     if (!cart || !cart.products || cart.products.length === 0) {
@@ -154,7 +166,6 @@ export default function CheckoutPage() {
       return;
     } catch (err: unknown) {
       console.error(err);
-      // safely extract message
       let message = "Failed to place order.";
       if (err && typeof err === "object" && "message" in err) {
         message = String((err as { message?: unknown }).message ?? message);
@@ -236,51 +247,21 @@ export default function CheckoutPage() {
                   >
                     <motion.ul className="space-y-3 mt-2">
                       {addresses.map((a, idx) => (
-                        <motion.li
+                          <motion.li
                           key={a._id ?? idx}
                           layout
                           variants={listItemVariants}
                           initial="hidden"
                           animate="visible"
                           transition={{ duration: 0.25, delay: idx * 0.03 }}
-                          className={`p-3 rounded-lg flex items-center justify-between cursor-pointer border hover:shadow-md shadow-primary/10 bg-secondary/20`}
                           onClick={() => handleSelectAddress(idx)}
                         >
-                          <div className="flex items-center gap-3 flex-1">
-                            <div className="w-11 h-11 rounded-lg flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5">
-                              <MapPin className="h-5 w-5 text-primary" />
-                            </div>
-                            <div className="min-w-0">
-                              <div className="flex items-center gap-2">
-                                <div className="font-medium truncate">{a.name}</div>
-                                <Badge className="bg-primary">{a.city}</Badge>
-                              </div>
-                              <div className="text-xs text-muted-foreground truncate">{a.details}</div>
-                              <div className="text-xs text-muted-foreground mt-1">{a.phone}</div>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-2 ml-3">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                openEditModal(idx);
-                              }}
-                              title="Edit"
-                              className="p-1"
-                            >
-                              <Edit2 className="h-4 w-4 text-muted-foreground" />
-                            </button>
-                            {selectedAddressIndex === idx ? (
-                              <div className="flex items-center gap-2">
-                                <div className="text-sm text-emerald-700 font-medium">Selected</div>
-                              </div>
-                            ) : (
-                              <>
-                                <div className="text-sm text-muted-foreground">Select</div>
-                              </>
-                            )}
-                          </div>
+                          <AddressCard
+                            address={a}
+                            selected={selectedAddressIndex === idx}
+                            onEdit={() => openEditModal(idx)}
+                            onRemove={() => handleRemoveAddress(a._id!)}
+                          />
                         </motion.li>
                       ))}
 
@@ -439,7 +420,7 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      <AddressDialog open={isModalOpen} onOpenChange={setIsModalOpen} setAddresses={setAddresses}/>
+      <AddressDialog editedAddress={editingIndex != null ? addresses[editingIndex] : null} open={isModalOpen} onOpenChange={setIsModalOpen} setAddresses={setAddresses}/>
     </div>
   );
 }

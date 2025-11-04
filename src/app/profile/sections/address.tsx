@@ -1,0 +1,101 @@
+"use client";
+
+import React, { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import AddressCard from "@/components/AddressCard";
+import AddressDialog from "@/components/checkout/AddressDialog";
+import type { IShippingAddress } from "@/interfaces/order";
+import { apiService } from "@/service/apiService";
+
+type Props = {
+  addresses: IShippingAddress[];
+  setAddresses: (a: IShippingAddress[]) => void;
+};
+
+export default function AddressesSection({ addresses, setAddresses }: Props) {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<IShippingAddress | null>(null);
+
+  const openAdd = () => {
+    setEditingAddress(null);
+    setDialogOpen(true);
+  };
+
+  const openEdit = (addr: IShippingAddress) => {
+    setEditingAddress(addr);
+    setDialogOpen(true);
+  };
+
+  const handleRemove = async (id?: string) => {
+    if (!id) return;
+    // optimistic update
+    setAddresses((prev) => prev.filter((a) => a._id !== id));
+    try {
+      const res = await apiService.deleteAddress(id);
+      if (res?.status === "success" && Array.isArray(res.data)) {
+        setAddresses(res.data);
+      }
+    } catch (err) {
+      console.error("AddressesSection delete failed", err);
+      // refetch fallback
+      try {
+        const r = await apiService.getAddresses();
+        if (r?.data) setAddresses(r.data);
+      } catch {}
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-xl font-semibold">Addresses</h3>
+        <div className="flex items-center gap-3">
+          <Button onClick={openAdd} variant="default"><Plus className="h-4 w-4 mr-2" /> Add new address</Button>
+        </div>
+      </div>
+
+      <Card className="rounded-xl border">
+        <CardContent>
+          <div className="space-y-3">
+            {addresses.length === 0 ? (
+              <div className="text-sm text-muted-foreground">No addresses yet.</div>
+            ) : (
+              addresses.map((a, idx) => (
+                <div key={a._id ?? idx} onClick={() => {}}>
+                  <AddressCard
+                    address={a}
+                    selected={false}
+                    onEdit={() => openEdit(a)}
+                    onRemove={() => handleRemove(a._id)}
+                  />
+                </div>
+              ))
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      <AddressDialog
+        editedAddress={editingAddress}
+        open={dialogOpen}
+        onOpenChange={(v) => {
+          setDialogOpen(v);
+          if (!v) setEditingAddress(null);
+        }}
+        setAddresses={(payload) => {
+          if (!payload) return;
+          if (Array.isArray(payload)) { setAddresses(payload); return; }
+          const a = payload as IShippingAddress;
+          if (!a || !a._id) return;
+          setAddresses((prev) => {
+            const exists = prev.find((x) => x._id === a._id);
+            if (exists) return prev.map((p) => (p._id === a._id ? a : p));
+            return [a, ...prev];
+          });
+        }}
+      />
+    </div>
+  );
+}
