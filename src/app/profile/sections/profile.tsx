@@ -11,8 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Edit2 } from "lucide-react";
 import { apiService } from "@/service/apiService";
 import type { IUserData } from "@/interfaces";
-import type { IShippingAddress } from "@/interfaces";
 import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const profileSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -25,21 +26,19 @@ type ProfileForm = z.infer<typeof profileSchema>;
 type Props = {
   user: IUserData | null;
   setUser: (u: IUserData | null) => void;
-  addresses: IShippingAddress[];
-  setAddresses: (a: IShippingAddress[]) => void;
 };
 
-export default function ProfileSection({ user, setUser, addresses, setAddresses }: Props) {
+export default function ProfileSection({ user, setUser }: Props) {
   const auth = useAuth();
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const router = useRouter();
 
   const form = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),
     defaultValues: { firstName: "", lastName: "", email: "", phone: "" },
   });
 
-  // initialize form when user prop changes
   React.useEffect(() => {
     if (!user) return;
     const parts = (user.name || "").trim().split(" ");
@@ -61,6 +60,7 @@ export default function ProfileSection({ user, setUser, addresses, setAddresses 
     );
   }, [user, editing, watched.firstName, watched.lastName, watched.email, watched.phone]);
 
+
   const onSubmit = async (data: ProfileForm) => {
     if (!user) return;
     setSaving(true);
@@ -76,10 +76,20 @@ export default function ProfileSection({ user, setUser, addresses, setAddresses 
       }
 
       const res = await apiService.updateUserInfo(payload);
-      const updated = res?.data ?? null;
+      // console.log("ProfileSection update response:", res);
+      const updated = res?.user ?? null;
+      // console.log("Payload:", updated);
       if (updated) {
         const merged: IUserData = ({ ...(user ?? {}), ...(payload as Partial<IUserData>) } as IUserData);
         setUser(merged);
+        toast.success("Profile updated successfully.", {
+          description: "Please login again to show updates.",
+          action: {
+            label: "Login Again",
+            onClick: () => {auth.logout(); router.push("/login"); },
+          },
+          duration: 4000,
+        });
         try { await auth?.verify?.(); } catch {}
         const parts = ((updated.name as string) ?? name).trim().split(" ");
         form.reset({
@@ -97,6 +107,12 @@ export default function ProfileSection({ user, setUser, addresses, setAddresses 
       setSaving(false);
     }
   };
+
+  
+  if(!auth.isAuthenticated) {
+    router.push("/login");
+    return null;
+  }
 
   return (
     <div className="space-y-6">

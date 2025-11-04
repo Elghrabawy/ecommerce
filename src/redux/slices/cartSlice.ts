@@ -108,10 +108,9 @@ const cartSlice = createSlice({
     addProduct: (state, action) => {
       const productId = action.payload;
       state.cart.cart.products.push({
-        
         count: 1,
-        _id: productId,
-        product: {} as IProduct,
+        _id: "xyz",
+        product: {_id: productId} as IProduct,
         price: 0,
       });
     },

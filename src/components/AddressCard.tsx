@@ -5,6 +5,7 @@ import { MapPin, Edit2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { IShippingAddress } from "@/interfaces";
+import { toast } from "sonner";
 
 type Props = {
   address: IShippingAddress;
@@ -70,7 +71,7 @@ export default function AddressCard({
               size="sm"
               variant="ghost"
               className="p-1 hover:bg-primary/5 bg-transparent"
-              onClick={(e) => { e.stopPropagation(); onRemove?.(); }}
+              onClick={(e) => { e.stopPropagation(); onRemove?.(); toast.info("Address removed successfully") }}
               title="Remove"
             >
               <Trash2 className="h-4 w-4 text-red-600" />

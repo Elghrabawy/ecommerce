@@ -13,7 +13,6 @@ import { Heart, Trash2 } from "lucide-react";
 import Currency from "@/components/utils/currency";
 import NProgress from "nprogress";
 import { useAuth } from "@/context/AuthContext";
-import { motion } from "framer-motion";
 import NotAuthorized from "@/components/auth/notAccessPage";
 
 export default function WishlistPage() {

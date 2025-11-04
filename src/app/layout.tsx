@@ -5,6 +5,7 @@ import Navbar from "@/components/layout/navbar";
 import { ThemeProvider } from "next-themes";
 import Loading from "./loading";
 import ProvidersContainer from "@/components/providersContainer/providersContainer";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -51,6 +52,7 @@ export default function RootLayout({
             <div className="container">{children}</div>
           </ProvidersContainer>
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );

@@ -12,6 +12,7 @@ import { Loader2, Eye, EyeOff } from "lucide-react";
 import { apiService } from "@/service/apiService";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const changePasswordSchema = z
   .object({
@@ -44,6 +45,8 @@ export default function SecuritySection() {
       const payload = { currentPassword: data.currentPassword, password: data.newPassword, rePassword: data.confirmNew };
       const res = await apiService.changeUserPassword(payload);
       if (res?.message === "success") {
+        confirm("hello");
+        toast.info("Password updated successfully. Please login again.");
         try { await auth.logout(); } catch {}
         router.push("/login");
         return;

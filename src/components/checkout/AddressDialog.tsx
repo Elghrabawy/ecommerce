@@ -19,6 +19,7 @@ import { apiService } from "@/service/apiService";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addressSchema } from "@/schemas/AddressSchema";
+import { toast } from "sonner";
 
 interface Props {
   open: boolean;
@@ -82,6 +83,7 @@ export default function AddressDialog({
   });
 
   const onSuccess = () => {
+    toast.success(editedAddress ? "Address updated successfully." : "Address added successfully.", {duration: 4000});
     setTimeout(() => {
       setSuccess(false);
       onOpenChange(false);

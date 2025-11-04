@@ -26,6 +26,7 @@ import { AppDispatch, StoreType } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { findInWishList, toggleWishList } from "@/redux/slices/wishListSlice";
 import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
 
 
@@ -252,6 +253,14 @@ export default function ProductsPage() {
     setProductParamsFromUrl();
     fetchBrands();
     fetchCategories();
+    // toast("Event has been created", {
+    //       description: "Sunday, December 03, 2023 at 9:00 AM",
+    //       action: {
+    //         label: "Undo",
+    //         onClick: () => console.log("Undo"),
+    //       },
+    //       duration: 4000
+    //     })
   }, []);
 
   const containerClass = useMemo(

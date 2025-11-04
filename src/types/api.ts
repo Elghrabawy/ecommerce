@@ -18,7 +18,7 @@ export type SingleProductResponse = {
 export type ApiProductsParams = {
   page?: number;
   limit?: number;
-  sort?: "-price" | "-createdAt" | "-quantity";
+  sort?: "-price" | "-createdAt" | "-quantity" | "-ratingsAverage";
   price?: Map<"gte" | "lte", number>;
   categories?: string[];
   brands?: string[];

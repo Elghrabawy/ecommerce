@@ -27,16 +27,14 @@ export default function ProductDetailsClient({
   const [selectedImage, setSelectedImage] = useState(0);
   const [descOpen, setDescOpen] = useState(false);
 
-
-  // graceful fallbacks
   const images = [product.imageCover, ...(product.images || [])].filter(
     Boolean
   );
   const displayedImages = images.length ? images : ["/placeholder-product.png"];
   const brand = product.brand?.name || "No Brand";
-  const subcategories: string[] = (
-    product.subcategory 
-  ).map((s: ISubcategory) => (typeof s === "string" ? s : s?.name ?? String(s)));
+  const subcategories: string[] = product.subcategory.map((s: ISubcategory) =>
+    typeof s === "string" ? s : s?.name ?? String(s)
+  );
 
   const price = product.priceAfterDiscount ?? product.price ?? 0;
   const oldPrice = product.priceAfterDiscount ? product.price : null;
@@ -49,7 +47,6 @@ export default function ProductDetailsClient({
     product.description ||
     "No description available for this product. Check back soon for more details!";
 
-  // thumbnails ref to center active
   const thumbRef = useRef<HTMLDivElement | null>(null);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -67,7 +64,6 @@ export default function ProductDetailsClient({
   }, [product]);
 
   useEffect(() => {
-    // center active thumbnail
     const el = thumbRef.current;
     if (!el) return;
     const active = el.children[selectedImage] as HTMLElement | undefined;
@@ -83,7 +79,6 @@ export default function ProductDetailsClient({
     setSelectedImage(
       (i) => (i - 1 + displayedImages.length) % displayedImages.length
     );
-
 
   return (
     <div className="mt-22 min-h-screen bg-gradient-to-b from-background via-accent/6 to-background pt-20 pb-24">
@@ -274,9 +269,7 @@ export default function ProductDetailsClient({
                   <div className="mt-4 text-sm text-muted-foreground">
                     Condition
                   </div>
-                  <div className="font-semibold mt-1">
-                    {"New"}
-                  </div>
+                  <div className="font-semibold mt-1">{"New"}</div>
                 </div>
               </div>
             </div>

@@ -155,7 +155,7 @@ export default function ProfilePage() {
                   variant="ghost"
                   onClick={() => {
                     setActiveTab("profile");
-                 }}
+                  }}
                 >
                   <Edit2 className="h-4 w-4" />
                 </Button>
@@ -230,8 +230,6 @@ export default function ProfilePage() {
               <ProfileSection
                 user={user}
                 setUser={setUser}
-                addresses={addresses}
-                setAddresses={setAddresses}
               />
             )}
             {activeTab === "security" && <SecuritySection />}
