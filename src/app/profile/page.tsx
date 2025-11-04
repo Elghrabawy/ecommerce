@@ -83,7 +83,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen py-12 px-4 container mx-auto max-w-6xl">
+      <div className="min-h-screen py-12 px-4 container mx-auto max-w-6xl  mt-22">
         <div className="grid md:grid-cols-3 gap-6">
           {/* SIDEBAR SKELETON */}
           <aside className="md:col-span-1">
@@ -122,7 +122,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen py-12 px-4 bg-muted/5 container mx-auto max-w-6xl">
+    <div className="min-h-screen py-12 px-4 bg-muted/5 container mx-auto max-w-6xl mt-22">
       <div className="grid md:grid-cols-3 gap-6">
         <aside className="md:col-span-1 md:sticky md:top-24 self-start">
           <Card className="p-0">
