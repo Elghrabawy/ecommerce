@@ -214,6 +214,8 @@ class ApiService {
       headers: this.getHeader(),
       body: JSON.stringify({ productId }),
     }).then((res) => res.json());
+
+    return response;
   }
 
   async fetchUserCart() {

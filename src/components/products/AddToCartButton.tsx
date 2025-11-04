@@ -67,7 +67,8 @@ export default function AddToCartButton({
 
     setIsLoading(true);
     const response = await apiService.postProductToCart(id);
-    if (response?.status !== "success") {
+
+    if (response?.status === "success") {
       dispatch(addProduct(id));
       setIsLoading(false);
       toast.success("Product added to cart successfully.", {
