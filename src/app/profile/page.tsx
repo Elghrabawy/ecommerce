@@ -81,6 +81,11 @@ export default function ProfilePage() {
     };
   }, [auth?.user?.id]);
 
+  useEffect(() => {
+    if(!auth.isAuthenticated) {
+      router.replace("/login");
+    }
+  }, [])
   if (loading) {
     return (
       <div className="min-h-screen py-12 px-4 container mx-auto max-w-6xl  mt-22">
