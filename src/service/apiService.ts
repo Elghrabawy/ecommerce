@@ -1,5 +1,5 @@
 import { ILogin, IRegister } from "@/interfaces";
-import { IShippingAddress } from "@/interfaces/order";
+import { IShippingAddress } from "@/interfaces";
 import {
   ApiProductsParams,
   CategoriesResponse,
