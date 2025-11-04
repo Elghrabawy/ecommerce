@@ -68,11 +68,8 @@ export default function LoginForm({
     }
   };
 
-  const handleFetchAddreses = async () => {
-    
   useEffect(() => {
     emailRef.current?.focus();
-
   }, []);
 
   return (
