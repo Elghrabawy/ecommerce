@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poppins, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/navbar";
+import Footer from "@/components/layout/Footer";
 import { ThemeProvider } from "next-themes";
 import Loading from "./loading";
 import ProvidersContainer from "@/components/providersContainer/providersContainer";
@@ -50,6 +51,7 @@ export default function RootLayout({
             <Navbar />
             {/* <span className="mt-22 block"></span> */}
             <div className="container">{children}</div>
+            <Footer />
           </ProvidersContainer>
         </ThemeProvider>
         <Toaster />

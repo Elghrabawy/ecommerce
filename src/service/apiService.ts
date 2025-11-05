@@ -194,7 +194,8 @@ class ApiService {
   // CATEGORY end points
   async fetchCategories(): Promise<CategoriesResponse> {
     const response: CategoriesResponse = await fetch(
-      this.baseUrl + "/categories"
+      this.baseUrl + "/categories",
+      { next: { revalidate: 3600 } }
     ).then((res) => res.json());
     return response;
   }
